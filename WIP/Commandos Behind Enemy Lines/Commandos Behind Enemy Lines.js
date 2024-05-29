@@ -11,7 +11,7 @@
     //Ok
 
 /// Notes
-    // Multiplayer needs dedicated server, a way to open/close with instances (AHK App?).
+    //Null
 
 Game.UseNucleusEnvironment = true;
 Game.HandlerInterval = 100;
@@ -139,8 +139,8 @@ if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
   new Nucleus.IniSaveInfo("ddraw","singlecpu", "false")
   ]);
  
- //Context.RunAdditionalFiles(["1|" + Game.Folder + "\\NucleusIPHotkey.bat"], false, 0);
- //Context.RunAdditionalFiles(["1|" + Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Legacy\\mpserver.exe"], false, 0);
+ Context.RunAdditionalFiles(["1|" + Game.Folder + "\\StartMultInsCtrller.bat"], false, 0);
+ Context.RunAdditionalFiles(["1|" + Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Legacy\\mpserver.exe"], false, 0);
 
 };
 
