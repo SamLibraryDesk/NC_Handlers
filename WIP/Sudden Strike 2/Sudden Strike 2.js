@@ -6,38 +6,40 @@
 
 /// Window manipulation
     // The game crashes at 640x480 with CNC-ddraw.
-    // Use SetWindowHook? causes incorrect cursor sync issue, (add Game.ProtoInput.AllowFakeCursorOutOfBounds maybe?)
-
+    
 /// Configs
     //Ok
 
 /// Notes
-    // The game has issue where it has the same ExecutableName as Sudden Strike (first version).
-    // The game runs through BAT file unlike the first version can be launched through the EXE.
+    // Need to copy files from (Sudden Strike 2 Gold\code\Release) to (Sudden Strike 2 Gold) folder.
 
-    var answers1 = ["60", "30"];
-    var answers2 = ["Fast", "Normal"];
-    var answers3 = ["Slow", "Normal", "Fast"];
-    var answers4 = ["Slow", "Normal", "Fast"];
-    Game.AddOption("Limit FPS", "For less CPU consumption use lower FPS.", "FPSCAP", answers1);
-    Game.AddOption("Game Speed", "This Option can be changed in the host menu.", "GAMESPEED", answers2);
-    Game.AddOption("Mouse scroll speed", "This Option can be changed in the start menu.", "MOUSESPEED", answers3);
-    Game.AddOption("Keyboard scroll speed", "This Option can be changed in the start menu.", "KBSPEED", answers4);
+var answers0 = ["Yes", "No"];
+var answers1 = ["60", "30"];
+var answers2 = ["Fast", "Normal"];
+var answers3 = ["Slow", "Normal", "Fast"];
+var answers4 = ["Slow", "Normal", "Fast"];
+Game.AddOption("Preserve aspect ratios?", "This option will prevent stretching windows.", "PRERATIO", answers0);
+Game.AddOption("Limit FPS", "For less CPU consumption use lower FPS.", "FPSCAP", answers1);
+Game.AddOption("Game Speed", "This Option can be changed in the host menu.", "GAMESPEED", answers2);
+Game.AddOption("Mouse scroll speed", "This Option can be changed in the start menu.", "MOUSESPEED", answers3);
+Game.AddOption("Keyboard scroll speed", "This Option can be changed in the start menu.", "KBSPEED", answers4);
 
+Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "cdv_logo.bik"];
+Game.DirSymlinkExclusions = ["movies", "SaveGames"];
 Game.UseNucleusEnvironment = true;
 Game.HandlerInterval = 100;
 Game.SymlinkExe = false;
 Game.SymlinkGame = true;
 Game.SymlinkFolders = true;
-Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "cdv_logo.bik"];
 Game.FileSymlinkCopyInstead = ["sudtest.ini"];
-Game.DirSymlinkExclusions = ["movies"];
+Game.DirSymlinkCopyInstead = ["xchng"];
+Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
 Game.HardcopyGame = false;
-Game.Description = "Use Nucleus-Coop app 2.2.1 or above, if faced a probem with starting your instances try to run Nucleus-Coop app as administer. Select your preference and start the game then wait until the instances repostin then press END to lock/unlock the inputs.";
+Game.Description = "Create a multiplayer game with one and join with the others without setting any IP, if the hosted game not showing set IP by pressing F5 or type 127.0.0.1  \n" +
+"Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 
-Game.ExecutableName = "sue.exe";
-Game.ExecutableToLaunch = "Sudden Strike II.bat";
-Game.BinariesFolder = "";
+Game.ExecutableName = "game_exe.exe";
+Game.ExecutableContext = ["n2Game_Dll.dll"];
 Game.SteamID = "612520";
 Game.GUID = "Sudden Strike 2 Gold";
 Game.GameName = "Sudden Strike 2 Gold";
@@ -51,12 +53,13 @@ Game.Hook.ForceFocusWindowName = "Sudden Strike version 2.0";
 Game.FakeFocusInterval =  100;
 Game.Hook.ForceFocus = true;
 Game.DontResize = true;
-//Game.DontReposition = true;
-Game.HideTaskbar = true;
+Game.DontReposition = true;
+Game.IgnoreWindowBordercheck = true;
+Game.DontRemoveBorders = true;
+Game.HideTaskbar = false;
 Game.SetTopMostAtEnd = true;
-Game.PreventWindowDeactivation = true;
 
-Game.PauseBetweenProcessGrab = 5;
+Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
 
 Game.Hook.DInputForceDisable = false;
@@ -89,18 +92,20 @@ Game.HookReRegisterRawInputMouse = false;
 Game.HookReRegisterRawInputKeyboard = false;
 Game.DrawFakeMouseCursor = false;
 
-Game.Play = function() {
 
+Game.Play = function() {
+	
+  var preratio = Context.Options["PRERATIO"];
   var fpscap = Context.Options["FPSCAP"];
   var gamespeed = Context.Options["GAMESPEED"];
   var mousespeed = Context.Options["MOUSESPEED"];
   var kbspeed = Context.Options["KBSPEED"];
   
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\code\\Release\\DDraw.dll");
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
   
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\code\\Release\\ddraw.ini");
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
@@ -109,14 +114,69 @@ Game.Play = function() {
   new Nucleus.IniSaveInfo("Game","Player0", Context.Nickname)
 ]); 
 
-if (fpscap == "60") {
-  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\code\\Release\\ddraw.ini";
+  if (preratio == "Yes") {
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.ini";
   Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-  new Nucleus.IniSaveInfo("ddraw","maxfps", "65")
+  new Nucleus.IniSaveInfo("ddraw","maintas", "true"),
+  new Nucleus.IniSaveInfo("ddraw","height", Context.Height),
+  new Nucleus.IniSaveInfo("ddraw","width", Context.Width),
+  new Nucleus.IniSaveInfo("ddraw","posY", Context.PosY),
+  new Nucleus.IniSaveInfo("ddraw","posX", Context.PosX)
+  ]); 
+}
+
+  if (preratio == "No") {
+
+Context.HideDesktop();
+
+let HWidth = Math.ceil(Context.Width / 1.8);
+let HPosX = Math.ceil((Context.Width - HWidth) / 2);
+
+let VHeight = Math.ceil(Context.Height / 1.3);
+let VPosY = Math.ceil((Context.Height - VHeight) / 2);
+
+if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.ini";
+  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+  new Nucleus.IniSaveInfo("ddraw","width", HWidth),
+  new Nucleus.IniSaveInfo("ddraw","posX", HPosX),
+  new Nucleus.IniSaveInfo("ddraw","height", Context.Height),
+  new Nucleus.IniSaveInfo("ddraw","posY", Context.PosY) 
+  ]);
+} else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.ini";
+  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+  new Nucleus.IniSaveInfo("ddraw","width", Context.Width),
+  new Nucleus.IniSaveInfo("ddraw","posX", Context.PosX),
+  new Nucleus.IniSaveInfo("ddraw","height", VHeight),
+  new Nucleus.IniSaveInfo("ddraw","posY", VPosY)
+  ]);
+} else {
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.ini";
+  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+  new Nucleus.IniSaveInfo("ddraw","height", Context.Height),
+  new Nucleus.IniSaveInfo("ddraw","width", Context.Width),
+  new Nucleus.IniSaveInfo("ddraw","posY", Context.PosY),
+  new Nucleus.IniSaveInfo("ddraw","posX", Context.PosX)
+  ]);
+}
+}
+
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.ini"; 
+  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+  new Nucleus.IniSaveInfo("ddraw","windowed", "true"),
+  new Nucleus.IniSaveInfo("ddraw","border", "false"),
+  new Nucleus.IniSaveInfo("ddraw","singlecpu", "false")
+  ]);
+
+if (fpscap == "60") {
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
+  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+  new Nucleus.IniSaveInfo("ddraw","maxfps", "60")
 ]);
 }
 if (fpscap == "30") {
-  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\code\\Release\\ddraw.ini";
+  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
   Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
   new Nucleus.IniSaveInfo("ddraw","maxfps", "30")
 ]);
@@ -125,7 +185,7 @@ if (fpscap == "30") {
   if (gamespeed == "Fast") {
 	  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\sudtest.ini";
 	  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-	  new Nucleus.IniSaveInfo("Game","MultiSpeed", "7")
+	  new Nucleus.IniSaveInfo("Game","MultiSpeedMultiSpeed", "7")
 ]);
 }
   if (gamespeed == "Normal") {
@@ -189,17 +249,8 @@ if (Context.Width > 1024 && Context.Height > 768) {
 	new Nucleus.IniSaveInfo("Game","VideoMode", "1")
 	]);
 }
-
-  var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\code\\Release\\ddraw.ini"; 
-  Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [ 
-  new Nucleus.IniSaveInfo("ddraw","windowed", "true"),
-  new Nucleus.IniSaveInfo("ddraw","border", "false"),
-  new Nucleus.IniSaveInfo("ddraw","width", Context.Width),
-  new Nucleus.IniSaveInfo("ddraw","height", Context.Height),
-  new Nucleus.IniSaveInfo("ddraw","posX", Context.PosX),
-  new Nucleus.IniSaveInfo("ddraw","posY", Context.PosY),
-  new Nucleus.IniSaveInfo("ddraw","singlecpu", "false")
-  ]);
+ 
+ Context.RunAdditionalFiles(["1|" + Game.Folder + "\\StartMultInsCtrller.bat"], false, 0);
  
 };
 
@@ -232,7 +283,7 @@ Game.ProtoInput.dinputToXinputRedirection = false;
 Game.ProtoInput.useOpenXinput = false;
 
 Game.ProtoInput.showCursorWhenImageUpdated = false;
-Game.ProtoInput.allowMouseOutOfBounds = true;
+Game.ProtoInput.allowMouseOutOfBounds = false;
 Game.ProtoInput.extendMouseBounds = false;
 Game.ProtoInput.toggleFakeCursorVisibilityShortcut = true;
 
