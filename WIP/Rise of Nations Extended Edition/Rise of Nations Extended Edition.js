@@ -116,27 +116,28 @@ Game.Play = function() {
     var path = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\current_user.xml";
    Context.ChangeXmlAttributeValue(path, "//CURRENT_USER", "name", "NucleusCoop");
 
-  if (Context.Width < 1024 || Context.Height < 768) {
+let Mwidth = "1024";
+let Mheight = "768";
+
+   if (Context.Width <= 1024) {
+    var width = Mwidth;
+    var height = Context.Height;
+   }
+   if (Context.Height <= 768) {
+    var width = Context.Width;
+    var height = Mheight;
+   }
+
     var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
     Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Window.System","OverrideRes", "1024x768")
-    ]);
-   var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
-   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", 1024),
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", 768)
-  ]);
-  } else {
-    var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
-    Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Window.System","OverrideRes", Context.Width + "x" + Context.Height)
+    new Nucleus.IniSaveInfo("Window.System","OverrideRes", width + "x" + height)
   ]);
    var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
    Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", Context.Width),
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", Context.Height)
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", width),
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", height)
   ]);
-}
+    
   var fpscap = Context.Options["FPSCAP"];
 
   if (fpscap == "Yes") {
