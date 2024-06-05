@@ -12,11 +12,11 @@
 
 /// Notes
     // This handler uses HardcopyGame. (need to discover and copy the necessary files).
+    // Only two of the instances can play through Lan, but they can join through "Game Browser" but Lan doesn't work (Pc to Pc).
 
 
 var answers1 = ["Yes", "No"];
 Game.AddOption("Enable VSync?", "", "FPSCAP", answers1);
-
 
 Game.SteamID = "287450";
 Game.GUID = "Rise of Nations Extended Edition";
@@ -47,7 +47,7 @@ Game.HookInit = true;
 Game.DontResize = true;
 
 Game.FakeFocus = true;
-Game.HookFocus = true;
+Game.HookFocus = false;
 Game.ForceWindowTitle = true;
 Game.Hook.ForceFocusWindowName = "Rise of Nations: Extended Edition";
 Game.FakeFocusInterval = 5;
@@ -55,7 +55,6 @@ Game.Hook.ForceFocus = true;
 Game.DontRemoveBorders = true;
 Game.HideTaskbar = true;
 Game.ResetWindows = true;
-Game.PreventWindowDeactivation = true;
 Game.SetTopMostAtEnd = true;
 
 Game.Hook.DInputForceDisable = false;
@@ -98,7 +97,7 @@ Game.ProtoInput.InjectRuntime_EasyHookStealthMethod = false;
 
 Game.LockInputAtStart = false;
 Game.LockInputSuspendsExplorer = true;
-Game.ProtoInput.FreezeExternalInputWhenInputNotLocked = false;
+Game.ProtoInput.FreezeExternalInputWhenInputNotLocked = true;
 Game.LockInputToggleKey = 0x23;
 
 Game.ProtoInput.RenameHandlesHook = false;
@@ -115,7 +114,7 @@ Game.ProtoInput.GetAsyncKeyStateHook = true;
 Game.ProtoInput.GetKeyboardStateHook = true;
 Game.ProtoInput.CursorVisibilityHook = true;
 Game.ProtoInput.ClipCursorHook = true;
-Game.ProtoInput.FocusHooks = false;
+Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.RenameHandlesHook = false;
 Game.ProtoInput.BlockRawInputHooks = true;
 Game.ProtoInput.DinputOrderHooks = false;
@@ -131,6 +130,9 @@ Game.ProtoInput.WindowActvateAppFilter = true;
 Game.ProtoInput.MouseWheelFilter = true;
 Game.ProtoInput.MouseButtonFilter = true;
 Game.ProtoInput.KeyboardButtonFilter = true;
+
+Game.ProtoInput.dinputToXinputRedirection = false;
+Game.ProtoInput.useOpenXinput = false;
 
 Game.ProtoInput.useFakeClipCursor = true;
 Game.ProtoInput.drawFakeCursor = true;
@@ -178,28 +180,27 @@ Game.Play = function() {
     var path = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\current_user.xml";
    Context.ChangeXmlAttributeValue(path, "//CURRENT_USER", "name", "NucleusCoop");
 
-let Mwidth = "1024";
-let Mheight = "768";
-
-   if (Context.Width <= 1024) {
-    var width = Mwidth;
-    var height = Context.Height;
-   }
-   if (Context.Height <= 768) {
-    var width = Context.Width;
-    var height = Mheight;
-   }
-
+  if (Context.Width < 1024 || Context.Height < 768) {
     var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
     Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Window.System","OverrideRes", width + "x" + height)
+    new Nucleus.IniSaveInfo("Window.System","OverrideRes", "1024x768")
+    ]);
+   var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
+   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", 1024),
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", 768)
+  ]);
+  } else {
+    var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
+    Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+    new Nucleus.IniSaveInfo("Window.System","OverrideRes", Context.Width + "x" + Context.Height)
   ]);
    var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
    Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", width),
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", height)
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", Context.Width),
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", Context.Height)
   ]);
-    
+}
   var fpscap = Context.Options["FPSCAP"];
 
   if (fpscap == "Yes") {
