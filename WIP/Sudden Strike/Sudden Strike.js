@@ -373,8 +373,6 @@ Game.Play = function() {
 	new Nucleus.IniSaveInfo("Game", "Player0", Context.Nickname)
   ]); 
 
-  Context.RunAdditionalFiles(["1|" + Game.Folder + "\\StartMultInsCtrller.bat"], false, 0);
-
   Game.ProtoInput.OnInputLocked = function() {
 	for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
