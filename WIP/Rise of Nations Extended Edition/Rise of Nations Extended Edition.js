@@ -12,8 +12,6 @@
 
 /// Notes
     // This handler uses HardcopyGame. (need to discover and copy the necessary files).
-    // Only two of the instances can play through Lan, but they can join through "Game Browser" but Lan doesn't work (Pc to Pc).
-
 
 var answers1 = ["Yes", "No"];
 Game.AddOption("Enable VSync?", "", "FPSCAP", answers1);
@@ -177,30 +175,33 @@ Game.Play = function() {
    var path = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\NucleusCoop.dat";
    Context.ChangeXmlAttributeValue(path, "//PLAYER_NAME", "value", Context.Nickname);
 
-    var path = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\current_user.xml";
+   var path = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\current_user.xml";
    Context.ChangeXmlAttributeValue(path, "//CURRENT_USER", "name", "NucleusCoop");
+   
+	var height = Context.Height;
+	var width = Context.Width;
+	
+	if (Context.Width < 1024) {
+		var width = "1024"
+	} else {
+		var width = Context.Width
+	}
+	if (Context.Height < 768) {
+		var height = "768"
+	} else {
+		var height = Context.Height
+	}
+		
+    var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
+    Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
+    new Nucleus.IniSaveInfo("Window.System","OverrideRes", width + "x" + height)
+  ]);
+   var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
+   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", width),
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", height)
+  ]);
 
-  if (Context.Width < 1024 || Context.Height < 768) {
-    var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
-    Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Window.System","OverrideRes", "1024x768")
-    ]);
-   var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
-   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", 1024),
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", 768)
-  ]);
-  } else {
-    var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
-    Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Window.System","OverrideRes", Context.Width + "x" + Context.Height)
-  ]);
-   var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
-   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Width", Context.Width),
-   new Nucleus.IniSaveInfo("RISE OF NATIONS","Windowed Height", Context.Height)
-  ]);
-}
   var fpscap = Context.Options["FPSCAP"];
 
   if (fpscap == "Yes") {
