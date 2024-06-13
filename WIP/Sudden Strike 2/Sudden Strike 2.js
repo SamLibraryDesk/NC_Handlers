@@ -49,7 +49,7 @@ Game.AddOption("Select your resolution for Player 10:", "", "P10Res", answers14)
 Game.AddOption("Select your resolution for Player 11:", "", "P11Res", answers15);
 Game.AddOption("Select your resolution for Player 12:", "", "P12Res", answers16);
 
-Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "intro_d.bik", "logo1_d.bik", "logo2_d.bik"];
+Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "dinput.dll", "winmm.dll", "intro_d.bik", "logo1_d.bik", "logo2_d.bik"];
 Game.DirSymlinkExclusions = ["movies", "SaveGames"];
 Game.UseNucleusEnvironment = true;
 Game.HandlerInterval = 100;
