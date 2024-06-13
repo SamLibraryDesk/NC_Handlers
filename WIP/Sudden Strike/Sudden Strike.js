@@ -49,7 +49,7 @@ Game.AddOption("Select your resolution for Player 11:", "", "P11Res", answers15)
 Game.AddOption("Select your resolution for Player 12:", "", "P12Res", answers16);
 
 Game.ExecutableContext = ["Game_Dll.dll"];
-Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "cdv_logo.bik", "sudtest.ini", "Game_Dll.dll", "menu.sue", "menu_dll.dll", "menu01.sue"];
+Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "dinput.dll", "cdv_logo.bik", "sudtest.ini", "Game_Dll.dll", "menu.sue", "menu_dll.dll", "menu01.sue"];
 Game.DirSymlinkExclusions = ["movies", "SaveGames"];
 Game.DirSymlinkCopyInstead = ["XCHNG"];
 Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
@@ -72,6 +72,7 @@ Game.Hook.ForceFocusWindowName = "Sudden Strike Forever";
 Game.Hook.ForceFocus = true;
 Game.DontResize = true;
 //Game.DontReposition = true;
+Game.ResetWindows = true;
 Game.IgnoreWindowBordercheck = true;
 Game.DontRemoveBorders = true;
 Game.SetTopMostAtEnd = true;
@@ -81,7 +82,8 @@ Game.Hook.DInputEnabled = false;
 Game.Hook.XInputEnabled = false;
 Game.Hook.XInputReroute = false;
 Game.Hook.CustomDllEnabled = false;
-Game.Description = "Create a multiplayer game with one and join with the others without setting any IP, if the hosted game not showing set IP by pressing F5 or set 127.0.0.1  \n\nPress END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
+Game.Description = "Create a multiplayer game with one and join with the others without setting any IP, if the hosted game not showing set IP by pressing type 127.0.0.1  \n" +
+"Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
 
@@ -209,6 +211,10 @@ Game.Play = function() {
   
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
+  
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\dinput.dll");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "dinput.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\sudtest.ini");
