@@ -1,3 +1,18 @@
+/// Network
+    //Ok
+
+/// Inputs
+    //Ok
+
+/// Window manipulation
+    //Ok
+    
+/// Configs
+    //Ok
+
+/// Notes
+    //Ok
+
 Game.KillMutex = ["UnrealEngine4"];
 Game.DirSymlinkExclusions = [
     "Engine\\Binaries\\ThirdParty\\Steamworks\\Steamv146\\Win64",
@@ -87,10 +102,10 @@ Game.ProtoInput.GetKeyStateHook = false;
 Game.ProtoInput.GetAsyncKeyStateHook = false;
 Game.ProtoInput.GetKeyboardStateHook = false;
 Game.ProtoInput.CursorVisibilityHook = false;
-Game.ProtoInput.ClipCursorHook = false;
+Game.ProtoInput.ClipCursorHook = true;
 Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.DrawFakeCursor = false;
-Game.ProtoInput.ClipCursorHookCreatesFakeClip = false;
+Game.ProtoInput.ClipCursorHookCreatesFakeClip = true;
 Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 
 Game.ProtoInput.RawInputFilter = false;
