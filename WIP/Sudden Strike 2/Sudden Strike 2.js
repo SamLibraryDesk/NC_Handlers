@@ -72,6 +72,7 @@ Game.GameName = "Sudden Strike 2 Gold";
 Game.MaxPlayers = 12;
 Game.MaxPlayersOneMonitor = 12;
 
+Game.SetWindowHook = true;
 Game.FakeFocus = true;
 Game.HookFocus = false;
 Game.ForceWindowTitle = true;
