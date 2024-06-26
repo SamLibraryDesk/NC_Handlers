@@ -64,6 +64,7 @@ Game.GameName = "Sudden Strike";
 Game.SteamID = "612300";
 Game.MaxPlayers = 12;
 Game.MaxPlayersOneMonitor = 12;
+Game.SetWindowHook = true;
 Game.FakeFocus = true;
 Game.FakeFocusInterval =  100;
 Game.HookFocus = false;
