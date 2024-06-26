@@ -11,7 +11,7 @@
     //Ok
 
 /// Notes
-    //Ok
+    //Null
 
 Game.KillMutex = ["UnrealEngine4"];
 Game.DirSymlinkExclusions = [
@@ -29,24 +29,18 @@ Game.SteamID = "1100420";
 Game.GUID = "Praetorians - HD Remaster";
 Game.MaxPlayers = 8;
 Game.MaxPlayersOneMonitor = 8;
-//Game.BinariesFolder = "Praetorians\\Binaries\\Win64\\Praetorians-Win64-Shipping.exe";
-Game.NeedsSteamEmulation = false;
 Game.UseGoldberg = true;
-Game.GoldbergExperimental = true;
-
 Game.SupportsPositioning = true;
 Game.ForceFinishOnPlay = true;
 Game.Hook.ForceFocus = true;
 Game.Hook.ForceFocusWindowName = "Praetorians - HD Remaster  ";
-
+Game.SetWindowHook = true;
+Game.HookFocus= false;
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
 Game.Hook.XInputEnabled = false;
 Game.Hook.XInputReroute = false;
 Game.Hook.CustomDllEnabled = false;
-
-Game.HookFocus= false;
-Game.SetWindowHook = true;
 Game.Description = "Create multiplayer game and join with the others. \n" +
 "Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 Game.PauseBetweenStarts = 15;
