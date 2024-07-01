@@ -51,7 +51,7 @@ Game.DocumentsSavePath = "My Games\\Rise of Nations";
 Game.Description =
   "Use the old version of the game on steam (open steam -> Rise Of Nation -> Properties... -> Betas -> v1_10_old - 2014 version)\n" +
   "Requires 950 MB of space for each instance.\n" +
-  "The game wouldn't resize the window less than 1024x768, so if you've 1920x1080 or less resolution you can't set 2 instance on 1 monitor, the possible way is to add and use higher custome desktop resolution (2732x1536 res can with 4 instances) .\n" +
+  "The game wouldn't resize the window less than 1024x768, so if you've 1920x1080 or less resolution you can't set 2 instance on 1 monitor, the possible way is to add and use higher custom desktop resolution (2732x1536 res can with 4 instances) .\n" +
   "When the instances have repositioned press the END key to lock the input.\n" +
   "Create a game through 'Game Browser' and join with the others.\n" +
   "Press the END key again to unlock the input and you can use CTRL+Q to close Nucleus and all its instances."
