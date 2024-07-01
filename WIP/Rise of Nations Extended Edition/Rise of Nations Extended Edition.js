@@ -11,10 +11,12 @@
     //Ok
 
 /// Notes
-    // This handler uses HardcopyGame. (need to discover and copy the necessary files).
+    //Null
 
 var answers1 = ["Yes", "No"];
+var answers2 = ["No", "Yes"];
 Game.AddOption("Enable VSync?", "", "FPSCAP", answers1);
+Game.AddOption("Keep the files when exit?", "Wouldn't need to copy the files when keep them. (Default: No)", "KEEPFILE", answers2);
 
 Game.SteamID = "287450";
 Game.GUID = "Rise of Nations Extended Edition";
@@ -22,28 +24,45 @@ Game.GameName = "Rise of Nations: Extended Edition";
 Game.LauncherTitle = "";
 Game.MaxPlayersOneMonitor = 8;
 Game.MaxPlayers = 8;
-
-Game.FileSymlinkExclusions = ["steam_api.dll", "steam_interfaces.txt", "bhg_game_studios1M.wmv", "ms_game_studios_1M.wmv", "skybox_intro_1440.wmv", "skybox_intro_1920.wmv", "opening.wmv", "d3d11.dll", "d3d11.ini"];
-//Game.FileSymlinkCopyInstead = ["", "", "", "", "", "", "", "", "", "", ""];
+Game.FileSymlinkExclusions = [
+"steam_api.dll", "steam_interfaces.txt", "bhg_game_studios1M.wmv", "ms_game_studios_1M.wmv", 
+"skybox_intro_1440.wmv", "skybox_intro_1920.wmv", "opening.wmv", "d3d11.dll", "d3d11.ini"
+];
+Game.FileSymlinkCopyInstead = [
+"avutil-ttv-51.dll", "balancerules.txt", "bestimt.txt", "bighuge.txt", "conquestmotd.txt",
+"counterchart.txt", "d3d8xstub.dll", "d3dcompiler_46.dll", "d3dgl.dll", "dbghelp.dll", "dpnl.dll", 
+"dssl.dll", "Eulaxp1.dll", "game.txt", "graphics.txt", "labels.txt", "libmfxsw32.dll", "libmp3lame-ttv.dll", 
+"masks.txt", "motd.txt", "obsoletescriptfuncs.txt", "PidGenx.dll", "pp_unicows.dll", "rise xml.spp", 
+"rise xml.spp", "rtp32cb.dll", "rules.dat", "saveobjects.txt", "soundlist.txt", "soundtypes.txt", 
+"SteamNetLib.dll", "swresample-ttv-0.dll", "taunt_categories.txt", "taunts.txt", "unicows.dll", 
+"wmstubber.dll"
+];
+Game.DirSymlinkCopyInstead = [ "terrain art", "tribes", "mapstyles", "ai" ];
+Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
+Game.DirExclusions = ["art"];
 Game.UseNucleusEnvironment = true;
 Game.UseGoldberg = true;
-//Game.GoldbergNeedSteamInterface = true;
-
 Game.HandlerInterval = 100;
 Game.ExecutableName = "rise.exe";
 Game.SymlinkExe = false;
 Game.SymlinkGame = true;
 Game.UserProfileConfigPath = "AppData\\Roaming\\Microsoft Games\\Rise of Nations";
-Game.DocumentsSavePath = "Documents\\My Games\\Rise of Nations";
+Game.DocumentsSavePath = "My Games\\Rise of Nations";
 Game.Description =
-  'Use the old version of the game on steam (open steam->Rise Of Nation->properties->Betas->v1_10_old - 2014 version).';
+  "Use the old version of the game on steam (open steam -> Rise Of Nation -> Properties... -> Betas -> v1_10_old - 2014 version)\n" +
+  "Requires 950 MB of space for each instance.\n" +
+  "The game wouldn't resize the window less than 1024x768, so if you've 1920x1080 or less resolution you can't set 2 instance on 1 monitor, the possible way is to add and use higher custome desktop resolution (2732x1536 res can with 4 instances) .\n" +
+  "When the instances have repositioned press the END key to lock the input.\n" +
+  "Create a game through 'Game Browser' and join with the others.\n" +
+  "Press the END key again to unlock the input and you can use CTRL+Q to close Nucleus and all its instances."
+Game.PauseBetweenContextAndLaunch = 8;
 Game.PauseBetweenProcessGrab = 5;
-Game.PauseBetweenStarts = 10;
+Game.PauseBetweenStarts = 15;
 
-Game.HardcopyGame = true;
+Game.KeepSymLinkOnExit = false;
+Game.HardcopyGame = false;
 Game.HookInit = true;
 Game.DontResize = true;
-
 Game.FakeFocus = true;
 Game.HookFocus = false;
 Game.ForceWindowTitle = true;
@@ -114,7 +133,7 @@ Game.ProtoInput.CursorVisibilityHook = true;
 Game.ProtoInput.ClipCursorHook = true;
 Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.RenameHandlesHook = false;
-Game.ProtoInput.BlockRawInputHooks = true;
+Game.ProtoInput.BlockRawInputHooks = false;
 Game.ProtoInput.DinputOrderHooks = false;
 Game.ProtoInput.XinputHooks = false;
 
@@ -158,10 +177,6 @@ Game.Play = function() {
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "d3d11.ini");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\steam_interfaces.txt");
-  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "steam_interfaces.txt");
-  System.IO.File.Copy(savePkgOrigin, savePath, true);
-
   var savePath = (Context.SavePath = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\PlayerProfile\\NucleusCoop.dat");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "NucleusCoop.dat");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
@@ -181,16 +196,8 @@ Game.Play = function() {
 	var height = Context.Height;
 	var width = Context.Width;
 	
-	if (Context.Width < 1024) {
-		var width = "1024"
-	} else {
-		var width = Context.Width
-	}
-	if (Context.Height < 768) {
-		var height = "768"
-	} else {
-		var height = Context.Height
-	}
+	if (Context.Width < 1024) {var width = "1024"} else {var width = Context.Width}
+	if (Context.Height < 768) {var height = "768"} else {var height = Context.Height }
 		
     var Config = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\d3d11.ini";
     Context.ModifySaveFile(Config, Config, Nucleus.SaveType.INI, [
@@ -203,18 +210,63 @@ Game.Play = function() {
   ]);
 
   var fpscap = Context.Options["FPSCAP"];
+  if (fpscap == "Yes") {Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ new Nucleus.IniSaveInfo("RISE OF NATIONS","VSync", "1")]);}
+  if (fpscap == "No") {Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ new Nucleus.IniSaveInfo("RISE OF NATIONS","VSync", "0")]);}
+ 
+  var batPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Copy.bat";
+  var batLines = [
+    "@echo off",
+    "title RoN COPIER",
+    'xcopy "' +
+      (Context.RootInstallFolder + "\\art") +
+      '" "' +
+      Context.GetFolder(Nucleus.Folder.InstancedGameFolder) +
+      '\\art\\" /S /Y /E',
+  ];
+  Context.WriteTextFile(batPath, batLines);
 
-  if (fpscap == "Yes") {
-    var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
-   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-    new Nucleus.IniSaveInfo("RISE OF NATIONS","VSync", "1")
-  ]);
+  if (!System.IO.File.Exists(Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\art\\snow\\woodcutter_6_snow.tga")) {
+    Game.PauseBetweenContextAndLaunch = 40
+    Context.RunAdditionalFiles(["all|" + Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Copy.bat"], false, 0);
   }
+   
+  var interfaces = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\steam_interfaces.txt";
+  var lines = [
+    "SteamClient015",
+    "SteamGameServer012",
+    "SteamGameServerStats001",
+    "SteamUser017",
+    "SteamFriends014",
+    "SteamUtils007",
+    "SteamMatchMaking009",
+    "SteamMatchMakingServers002",
+    "STEAMUSERSTATS_INTERFACE_VERSION011",
+    "STEAMAPPS_INTERFACE_VERSION006",
+    "SteamNetworking005",
+    "STEAMREMOTESTORAGE_INTERFACE_VERSION012",
+    "STEAMSCREENSHOTS_INTERFACE_VERSION002",
+    "STEAMHTTP_INTERFACE_VERSION002",
+    "STEAMUNIFIEDMESSAGES_INTERFACE_VERSION001",
+    "STEAMUGC_INTERFACE_VERSION002",
+    "STEAMAPPLIST_INTERFACE_VERSION001",
+    "STEAMMUSIC_INTERFACE_VERSION001",
+    "STEAMMUSICREMOTE_INTERFACE_VERSION001",
+    "STEAMCONTROLLER_INTERFACE_VERSION",
+  ];
+  Context.WriteTextFile(interfaces, lines);
+  
+  var keepfile = Context.Options["KEEPFILE"];
+  var hndlrPath = Context.HandlersFolder + "\\Rise of Nations Extended Edition.js";
 
-  if (fpscap == "No") {
-    var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
-   Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
-    new Nucleus.IniSaveInfo("RISE OF NATIONS","VSync", "0")
-  ]);
-  }
+  if (keepfile == "Yes") {
+	  var dict = [
+	  Context.FindLineNumberInTextFile(hndlrPath, 'var answers2 =', Nucleus.SearchType.StartsWith) + '|var answers2 = ["Yes", "No"];',
+	  Context.FindLineNumberInTextFile(hndlrPath, 'Game.KeepSymLinkOnExit =', Nucleus.SearchType.StartsWith) + '|Game.KeepSymLinkOnExit = true;'
+	  ];}
+  if (keepfile == "No") {
+	  var dict = [
+	  Context.FindLineNumberInTextFile(hndlrPath, 'var answers2 =', Nucleus.SearchType.StartsWith) + '|var answers2 = ["No", "Yes"];',
+	  Context.FindLineNumberInTextFile(hndlrPath, 'Game.KeepSymLinkOnExit =', Nucleus.SearchType.StartsWith) + '|Game.KeepSymLinkOnExit = false;'
+	  ];}
+	  Context.ReplaceLinesInTextFile(hndlrPath, dict)
 };
