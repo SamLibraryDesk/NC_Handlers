@@ -89,11 +89,11 @@ Game.DrawFakeMouseCursor = false;
 
 Game.Play = function() {
 
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Legacy\\DDraw.dll");
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
   
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Legacy\\ddraw.ini");
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
@@ -120,6 +120,8 @@ Context.ReplaceLinesInTextFile(txtPath, dict);
 */
 
 var preratio = Context.Options["PRERATIO"];
+
+var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
 
 if (preratio == "Yes") {
 	Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [new Nucleus.IniSaveInfo("ddraw","maintas", "true")]);
