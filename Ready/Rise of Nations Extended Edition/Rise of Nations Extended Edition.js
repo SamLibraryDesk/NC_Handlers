@@ -14,9 +14,9 @@
     //Null
 
 var answers1 = ["Yes", "No"];
-var answers2 = ["No", "Yes"];
+var answers2 = ["Yes", "No"];
 Game.AddOption("Enable VSync?", "", "FPSCAP", answers1);
-Game.AddOption("Keep the files when exit?", "Wouldn't need to copy the files when keep them. (Default: No)", "KEEPFILE", answers2);
+Game.AddOption("Keep the files when exit?", "Wouldn't need to copy the files again when you keep them. (Default: No)", "KEEPFILE", answers2);
 
 Game.SteamID = "287450";
 Game.GUID = "Rise of Nations Extended Edition";
@@ -50,7 +50,7 @@ Game.UserProfileConfigPath = "AppData\\Roaming\\Microsoft Games\\Rise of Nations
 Game.DocumentsSavePath = "My Games\\Rise of Nations";
 Game.Description =
   "Use the old version of the game on steam (open steam -> Rise Of Nation -> Properties... -> Betas -> v1_10_old - 2014 version)\n" +
-  "Requires 950 MB of space for each instance.\n" +
+  "Requires 1 GB of space for each instance.\n" +
   "The game wouldn't resize the window less than 1024x768, so if you've 1920x1080 or less resolution you can't set 2 instance on 1 monitor, the possible way is to add and use higher custom desktop resolution (2732x1536 res can with 4 instances) .\n" +
   "When the instances have repositioned press the END key to lock the input.\n" +
   "Create a game through 'Game Browser' and join with the others.\n" +
@@ -59,7 +59,7 @@ Game.PauseBetweenContextAndLaunch = 8;
 Game.PauseBetweenProcessGrab = 5;
 Game.PauseBetweenStarts = 15;
 
-Game.KeepSymLinkOnExit = false;
+Game.KeepSymLinkOnExit = true;
 Game.HardcopyGame = false;
 Game.HookInit = true;
 Game.DontResize = true;
@@ -184,6 +184,7 @@ Game.Play = function() {
    var videoConfig = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\rise2.ini"; 
    Context.ModifySaveFile(videoConfig, videoConfig, Nucleus.SaveType.INI, [ 
    new Nucleus.IniSaveInfo("RISE OF NATIONS","Fullscreen", "0"),
+   new Nucleus.IniSaveInfo("RISE OF NATIONS","SkipIntroMovies", "1"),
    new Nucleus.IniSaveInfo("RISE OF NATIONS","VSync", "1")
    ]);
 
