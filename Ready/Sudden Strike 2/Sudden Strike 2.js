@@ -49,7 +49,7 @@ Game.AddOption("Select your resolution for Player 10:", "", "P10Res", answers14)
 Game.AddOption("Select your resolution for Player 11:", "", "P11Res", answers15);
 Game.AddOption("Select your resolution for Player 12:", "", "P12Res", answers16);
 
-Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "dinput.dll", "winmm.dll", "intro_d.bik", "logo1_d.bik", "logo2_d.bik"];
+Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "dinput.dll", "winmm.dll", "intro.bik", "logo1.bik", "logo2.bik"];
 Game.DirSymlinkExclusions = ["movies", "SaveGames"];
 Game.UseNucleusEnvironment = true;
 Game.HandlerInterval = 100;
@@ -72,7 +72,6 @@ Game.GameName = "Sudden Strike 2 Gold";
 Game.MaxPlayers = 12;
 Game.MaxPlayersOneMonitor = 12;
 
-Game.SetWindowHook = true;
 Game.FakeFocus = true;
 Game.HookFocus = false;
 Game.ForceWindowTitle = true;
@@ -82,11 +81,11 @@ Game.Hook.ForceFocus = true;
 Game.DontResize = true;
 //Game.DontReposition = true;
 Game.ResetWindows = true;
+Game.SetWindowHook = true;
 Game.IgnoreWindowBordercheck = true;
 Game.DontRemoveBorders = true;
 Game.HideTaskbar = true;
 Game.SetTopMostAtEnd = true;
-
 Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
 
@@ -147,10 +146,10 @@ Game.ProtoInput.GetKeyStateHook = false;
 Game.ProtoInput.GetAsyncKeyStateHook = false;
 Game.ProtoInput.GetKeyboardStateHook = false;
 Game.ProtoInput.CursorVisibilityHook = false;
-Game.ProtoInput.ClipCursorHook = false;
+Game.ProtoInput.ClipCursorHook = true;
 Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.DrawFakeCursor = false;
-Game.ProtoInput.ClipCursorHookCreatesFakeClip = false;
+Game.ProtoInput.ClipCursorHookCreatesFakeClip = true;
 Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 
 Game.ProtoInput.RawInputFilter = false;
@@ -275,7 +274,7 @@ Game.Play = function() {
 	var width = Context.Width;
 	var posY = Context.PosY;
 	var posX = Context.PosX;	
-  }
+	}
 
   if (preratio == "No") {
 	Context.HideDesktop();
@@ -291,18 +290,18 @@ Game.Play = function() {
 	  var width = HWidth;
 	  var posY = Context.PosY;
 	  var posX = HPosX;
-	} else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
+	  } else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
 	  var height = VHeight;
 	  var width = Context.Width;
 	  var posY = VPosY;
 	  var posX = Context.PosX;
-	} else {
+	  } else {
 	  var height = Context.Height;
 	  var width = Context.Width;
 	  var posY = Context.PosY;
 	  var posX = Context.PosX;
-	}
-  }
+	  }
+	 }
 
   Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [
 	new Nucleus.IniSaveInfo("ddraw","windowed", "true"),
@@ -332,14 +331,6 @@ Game.Play = function() {
 	} else {
 	  var cad = '640';
 	}
-  } else if (res == "640x480") {
-	var cad = '640';
-  } else if (res == "800x600") {
-	var cad = '800';
-  } else if (res == "1024x768") {
-	var cad = '1024';
-  } else {
-	var cad = res
   }
 
   Context.ModifySaveFile(sudPath, sudPath, Nucleus.SaveType.INI, [
@@ -408,7 +399,7 @@ Game.Play = function() {
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
 
-      ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 5000, true, true, true, true, true);
+      ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 5000, false, false, false, false, true);
     }
   };
 };
