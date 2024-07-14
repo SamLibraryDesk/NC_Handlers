@@ -131,16 +131,14 @@ Game.ProtoInput.GetAsyncKeyStateHook = true;
 Game.ProtoInput.GetKeyboardStateHook = true;
 Game.ProtoInput.CursorVisibilityHook = true;
 Game.ProtoInput.ClipCursorHook = true;
+Game.ProtoInput.ClipCursorHookCreatesFakeClip = false;
 Game.ProtoInput.FocusHooks = true;
-Game.ProtoInput.RenameHandlesHook = false;
-Game.ProtoInput.BlockRawInputHooks = false;
-Game.ProtoInput.DinputOrderHooks = false;
-Game.ProtoInput.XinputHooks = false;
-
+Game.ProtoInput.drawFakeCursor = true;
+Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 Game.ProtoInput.FindWindowHook = true;
 
 Game.ProtoInput.RawInputFilter = true;
-Game.ProtoInput.MouseMoveFilter = true;
+Game.ProtoInput.MouseMoveFilter = false;
 Game.ProtoInput.MouseActivateFilter = true;
 Game.ProtoInput.WindowActivateFilter = true;
 Game.ProtoInput.WindowActvateAppFilter = true;
@@ -148,16 +146,15 @@ Game.ProtoInput.MouseWheelFilter = true;
 Game.ProtoInput.MouseButtonFilter = true;
 Game.ProtoInput.KeyboardButtonFilter = true;
 
-Game.ProtoInput.dinputToXinputRedirection = false;
-Game.ProtoInput.useOpenXinput = false;
-
-Game.ProtoInput.useFakeClipCursor = true;
-Game.ProtoInput.drawFakeCursor = true;
-
 Game.ProtoInput.SendMouseMovementMessages = true;
 Game.ProtoInput.SendMouseButtonMessages = true;
 Game.ProtoInput.SendMouseWheelMessages = true;
 Game.ProtoInput.SendKeyboardButtonMessages = true;
+Game.ProtoInput.XinputHook = false;
+Game.ProtoInput.UseOpenXinput = false;
+Game.ProtoInput.UseDinputRedirection = false;
+Game.ProtoInput.DinputDeviceHook = false;
+Game.ProtoInput.DinputHookAlsoHooksGetDeviceState = false;
 
 Game.ProtoInput.EnableFocusMessageLoop = false;
 Game.ProtoInput.FocusLoop_WM_ACTIVATE = false;
@@ -165,7 +162,7 @@ Game.ProtoInput.FocusLoop_WM_NCACTIVATE = false;
 Game.ProtoInput.FocusLoop_WM_ACTIVATEAPP = false;
 Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
-Game.ProtoInput.BlockedMessages = [];
+Game.ProtoInput.BlockedMessages = [ 0x0008 ]; // Blocks WM_KILLFOCUS
 
 Game.Play = function() {
   
@@ -275,4 +272,28 @@ Game.Play = function() {
 	  ];}
 	  Context.ReplaceLinesInTextFile(hndlrPath, dict)
 */
-};
+
+    Game.ProtoInput.OnInputLocked = function() {
+      for (var i = 0; i < PlayerList.Count; i++) {
+        var player = PlayerList[i];
+
+        ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, true);
+        
+        ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 0, true, true, true, true, true);
+  
+        System.Threading.Thread.Sleep(1000);
+  
+        ProtoInput.StopFocusMessageLoop(player.ProtoInputInstanceHandle);
+      }
+    };
+  
+    Game.ProtoInput.OnInputUnlocked = function() {
+      for (var i = 0; i < PlayerList.Count; i++) {
+        var player = PlayerList[i];
+
+        ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
+  
+        ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 5000, true, true, true, true, true);
+      }
+    };
+  };
