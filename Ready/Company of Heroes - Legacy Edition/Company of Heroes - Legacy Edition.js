@@ -33,12 +33,6 @@ Game.MaxPlayersOneMonitor = 8;
 Game.UseGoldberg = true;
 Game.UseNucleusEnvironment = true;
 
-// Game.ChangeExe = true;
-// Game.HookInit = true;
-// Game.IdInWindowTitle = true;
-// Game.LaunchAsDifferentUsers = true;
-// Game.LaunchAsDifferentUsersAlt = true;
-
 Game.SupportsPositioning = true;
 Game.ForceFinishOnPlay = true;
 Game.Hook.ForceFocus = true;
@@ -48,8 +42,8 @@ Game.Hook.ForceFocusWindowName = "Company Of Heroes";
 Game.WindowStyleValues = [ "~0x400000", "~0x40000" ];
 Game.RefreshWindowAfterStart = true;
 
-Game.UseForceBindIP = true;
-Game.ForceBindIPNoDummy = true;
+Game.LauncherExe = "ip.bat";
+Game.LauncherExeIgnoreFileCheck = true;
 
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
@@ -147,7 +141,6 @@ Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
 Game.ProtoInput.BlockedMessages = [ 0x0008 ]; // Blocks WM_KILLFOCUS
 
-
 Game.Play = function () {
 
   var Args = Context.Args = " -window" + " -nomovies";
@@ -159,6 +152,18 @@ Game.Play = function () {
     "192|		value = " + Context.Height + "," // height
   ];
   Context.ReplaceLinesInTextFile(txtPath, dict);
+
+  var id = Context.PlayerID + 1;
+  var Bat = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ip.bat";
+  var lines = [
+    '"' +
+    Context.NucleusFolder +
+    '\\utils\\ForceBindIP\\ForceBindIP.exe" 127.0.0.' +
+    id +
+    ' "' +
+    Context.GetFolder(Nucleus.Folder.InstancedGameFolder) +
+    '\\RelicCOH.exe"+ ' + Args + ''];
+    Context.WriteTextFile(Bat, lines);
   
   Game.ProtoInput.OnInputLocked = function() {
     for (var i = 0; i < PlayerList.Count; i++) {
