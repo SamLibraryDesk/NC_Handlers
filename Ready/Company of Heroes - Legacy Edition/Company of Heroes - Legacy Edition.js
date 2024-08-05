@@ -13,6 +13,9 @@
 /// Notes
     // Not able to change the nickname.
 
+var answers1 = ["Default", "Ultra", "High", "Medium", "Low"];
+Game.AddOption("Set Graphics option", "", "GFXSET", answers1);
+
 Game.KillMutexType = "Event";
 Game.KillMutex = ["{bb6f297c-b959-4958-b993-55d9e6bfe109}"];
 
@@ -28,22 +31,28 @@ Game.ExecutableName = "RelicCOH.exe";
 Game.ExecutableContext = ["STLPort.5.1.dll"];
 Game.SteamID = "4560";
 Game.GUID = "Company of Heroes";
+Game.LauncherExe = "ip.bat";
+Game.LauncherExeIgnoreFileCheck = true;
 Game.MaxPlayers = 8;
 Game.MaxPlayersOneMonitor = 8;
 Game.UseGoldberg = true;
 Game.UseNucleusEnvironment = true;
+Game.DocumentsConfigPath = "My Games\\Company of Heroes";
 
-Game.SupportsPositioning = true;
-Game.ForceFinishOnPlay = true;
+Game.HideTaskbar = true;
 Game.Hook.ForceFocus = true;
 Game.HookFocus= false;
-// Game.SetWindowHook = true;
+Game.SetWindowHook = true;
 Game.Hook.ForceFocusWindowName = "Company Of Heroes";
-Game.WindowStyleValues = [ "~0x400000", "~0x40000" ];
+Game.WindowStyleValues = [ "0x40000000", "~0x400000", "~0x40000" ];
+// Game.ResetWindows = true;
 Game.RefreshWindowAfterStart = true;
 
-Game.LauncherExe = "ip.bat";
-Game.LauncherExeIgnoreFileCheck = true;
+Game.Description = "Create multiplayer game and join with the others. \n" +
+"Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
+Game.PauseBetweenContextAndLaunch = 3;
+Game.PauseBetweenProcessGrab = 5;
+Game.PauseBetweenStarts = 10;
 
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
@@ -51,15 +60,8 @@ Game.Hook.XInputEnabled = false;
 Game.Hook.XInputReroute = false;
 Game.Hook.CustomDllEnabled = false;
 
-Game.DocumentsConfigPath = "My Games\\Company of Heroes";
-
-Game.Description = "Create multiplayer game and join with the others. \n" +
-"Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
-Game.PauseBetweenStarts = 15;
-
 //USS deprecated options:
 
-Game.SupportsMultipleKeyboardsAndMice = false;
 Game.HookSetCursorPos = false;
 Game.HookGetCursorPos = false;
 Game.HookGetKeyState = false;
@@ -107,7 +109,7 @@ Game.ProtoInput.SetCursorPosHook = false;
 Game.ProtoInput.GetKeyStateHook = false;
 Game.ProtoInput.GetAsyncKeyStateHook = false;
 Game.ProtoInput.GetKeyboardStateHook = false;
-Game.ProtoInput.CursorVisibilityHook = false;
+Game.ProtoInput.CursorVisibilityHook = true;
 Game.ProtoInput.ClipCursorHook = false;
 Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.DrawFakeCursor = false;
@@ -146,10 +148,110 @@ Game.Play = function () {
   var Args = Context.Args = " -window" + " -nomovies";
   Context.StartArguments = Args;
 
+  var savePath = (Context.SavePath = Context.DocumentsPlayer + "\\" + Context.DocumentsConfigPath + "\\configuration.lua");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "configuration.lua");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  var gfxset = Context.Options["GFXSET"];
+
+  if (gfxset == "Default") {}
+
+  if (gfxset == "Ultra") {
+    var shadows = "3"
+    var postprocessing = "1"
+    var prevshaderquality = "0"
+    var prevaamodeindex = "0"
+    var ribbons = "1"
+    var modeldetail = "511"
+    var effectsfidelity = "3"
+    var texturedetail = "0"
+    var treedetail = "0"
+    var physics = "3"
+    var reflections = "1"
+    var objectscarring = "1"
+    var raindetail = "2"
+    var antialiasing = "3"
+    var effectsdensity = "3"
+    var terraindetail = "0"
+  }
+
+  if (gfxset == "High") {
+    var shadows = "3"
+    var postprocessing = "1"
+    var prevshaderquality = "1"
+    var prevaamodeindex = "0"
+    var ribbons = "1"
+    var modeldetail = "334"
+    var effectsfidelity = "2"
+    var texturedetail = "1"
+    var treedetail = "0"
+    var physics = "3"
+    var reflections = "1"
+    var objectscarring = "1"
+    var raindetail = "2"
+    var antialiasing = "1"
+    var effectsdensity = "2"
+    var terraindetail = "1"
+  }
+
+  if (gfxset == "Medium") {
+    var shadows = "2"
+    var postprocessing = "0"
+    var prevshaderquality = "2"
+    var prevaamodeindex = "2"
+    var ribbons = "0"
+    var modeldetail = "185"
+    var effectsfidelity = "1"
+    var texturedetail = "2"
+    var treedetail = "1"
+    var physics = "2"
+    var reflections = "0"
+    var objectscarring = "0"
+    var raindetail = "1"
+    var antialiasing = "0"
+    var effectsdensity = "1"
+    var terraindetail = "2"
+  }
+
+  if (gfxset == "Low") {
+    var shadows = "1"
+    var postprocessing = "0"
+    var prevshaderquality = "2"
+    var prevaamodeindex = "3"
+    var ribbons = "0"
+    var modeldetail = "86"
+    var effectsfidelity = "0"
+    var texturedetail = "3"
+    var treedetail = "2"
+    var physics = "1"
+    var reflections = "0"
+    var objectscarring = "0"
+    var raindetail = "0"
+    var antialiasing = "0"
+    var effectsdensity = "2"
+    var terraindetail = "2"
+  }
+
   var txtPath = Context.DocumentsPlayer + "\\" + Context.DocumentsConfigPath + "\\configuration.lua";
   var dict = [
-    "120|		value = " + Context.Width + ",", // width
-    "192|		value = " + Context.Height + "," // height
+    "138|		value = " + Context.Width + ",",
+    "210|		value = " + Context.Height + ",",
+    "12|		value = " + shadows + ",",
+    "18|		value = " + postprocessing + ",",
+    "30|		value = " + prevshaderquality + ",",
+    "36|		value = " + prevaamodeindex + ",",
+    "48|		value = " + ribbons + ",",
+    "72|		value = " + modeldetail + ",",
+    "78|		value = " + effectsfidelity + ",",
+    "84|		value = " + texturedetail + ",",
+    "96|		value = " + treedetail + ",",
+    "102|		value = " + physics + ",",
+    "114|		value = " + reflections + ",",
+    "132|		value = " + objectscarring + ",",
+    "192|		value = " + raindetail + ",",
+    "198|		value = " + antialiasing + ",",
+    "228|		value = " + effectsdensity + ",",
+    "246|		value = " + terraindetail + ","
   ];
   Context.ReplaceLinesInTextFile(txtPath, dict);
 
@@ -158,8 +260,7 @@ Game.Play = function () {
   var lines = [
     '"' +
     Context.NucleusFolder +
-    '\\utils\\ForceBindIP\\ForceBindIP.exe" 127.0.0.' +
-    id +
+    '\\utils\\ForceBindIP\\ForceBindIP.exe" 127.0.0.' +id +
     ' "' +
     Context.GetFolder(Nucleus.Folder.InstancedGameFolder) +
     '\\RelicCOH.exe"+ ' + Args + ''];
@@ -171,19 +272,18 @@ Game.Play = function () {
     
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
-      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
+      // ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
     
       //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
-      //ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
     
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
+      // ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
@@ -204,19 +304,19 @@ Game.Play = function () {
   Game.ProtoInput.OnInputUnlocked = function() {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
-    
+
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
+      // ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
 
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
+      // ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
@@ -227,6 +327,10 @@ Game.Play = function () {
       ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
     
       ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 5000, true, true, true, true, true);
+
+      // System.Threading.Thread.Sleep(1000);
+
+      // ProtoInput.StopFocusMessageLoop(player.ProtoInputInstanceHandle);
     }
   };
 };
