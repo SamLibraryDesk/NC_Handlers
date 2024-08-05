@@ -13,7 +13,7 @@
 /// Notes
     // Not able to change the nickname.
 
-var answers1 = ["Default", "Ultra", "High", "Medium", "Low"];
+var answers1 = ["Ultra", "High", "Medium", "Low"];
 Game.AddOption("Set Graphics option", "", "GFXSET", answers1);
 
 Game.KillMutexType = "Event";
@@ -52,7 +52,7 @@ Game.Description = "Create multiplayer game and join with the others. \n" +
 "Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 Game.PauseBetweenContextAndLaunch = 3;
 Game.PauseBetweenProcessGrab = 5;
-Game.PauseBetweenStarts = 10;
+Game.PauseBetweenStarts = 15;
 
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
@@ -153,8 +153,6 @@ Game.Play = function () {
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
   var gfxset = Context.Options["GFXSET"];
-
-  if (gfxset == "Default") {}
 
   if (gfxset == "Ultra") {
     var shadows = "3"
