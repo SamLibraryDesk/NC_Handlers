@@ -19,7 +19,6 @@ Game.AddOption("Set Graphics option", "", "GFXSET", answers1);
 Game.KillMutexType = "Event";
 Game.KillMutex = ["{bb6f297c-b959-4958-b993-55d9e6bfe109}"];
 
-// Game.DirSymlinkExclusions = ["validators"];
 Game.DirSymlinkCopyInstead = [ "validators" ];
 Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
 Game.FileSymlinkExclusions = ["steam_api.dll"];
@@ -41,7 +40,7 @@ Game.DocumentsConfigPath = "My Games\\Company of Heroes";
 
 Game.HideTaskbar = true;
 Game.Hook.ForceFocus = true;
-Game.HookFocus= false;
+Game.HookFocus = false;
 Game.SetWindowHook = true;
 Game.Hook.ForceFocusWindowName = "Company Of Heroes";
 Game.WindowStyleValues = [ "0x40000000", "~0x400000", "~0x40000" ];
@@ -129,8 +128,8 @@ Game.ProtoInput.SendMouseMovementMessages = true;
 Game.ProtoInput.SendMouseButtonMessages = true;
 Game.ProtoInput.SendMouseWheelMessages = true;
 Game.ProtoInput.SendKeyboardButtonMessages = true;
-// Game.ProtoInput.XinputHook = true;
-// Game.ProtoInput.UseOpenXinput = true;
+Game.ProtoInput.XinputHook = false;
+Game.ProtoInput.UseOpenXinput = false;
 Game.ProtoInput.UseDinputRedirection = false;
 Game.ProtoInput.DinputDeviceHook = false;
 Game.ProtoInput.DinputHookAlsoHooksGetDeviceState = false;
@@ -145,15 +144,13 @@ Game.ProtoInput.BlockedMessages = [ 0x0008 ]; // Blocks WM_KILLFOCUS
 
 Game.Play = function () {
 
-  var Args = Context.Args = " -window" + " -nomovies";
-  Context.StartArguments = Args;
+  var Args = " -window" + " -nomovies";
 
   var savePath = (Context.SavePath = Context.DocumentsPlayer + "\\" + Context.DocumentsConfigPath + "\\configuration.lua");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "configuration.lua");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
 
   var gfxset = Context.Options["GFXSET"];
-
   if (gfxset == "Ultra") {
     var shadows = "3"
     var postprocessing = "1"
@@ -172,7 +169,6 @@ Game.Play = function () {
     var effectsdensity = "3"
     var terraindetail = "0"
   }
-
   if (gfxset == "High") {
     var shadows = "3"
     var postprocessing = "1"
@@ -191,7 +187,6 @@ Game.Play = function () {
     var effectsdensity = "2"
     var terraindetail = "1"
   }
-
   if (gfxset == "Medium") {
     var shadows = "2"
     var postprocessing = "0"
@@ -210,7 +205,6 @@ Game.Play = function () {
     var effectsdensity = "1"
     var terraindetail = "2"
   }
-
   if (gfxset == "Low") {
     var shadows = "1"
     var postprocessing = "0"
@@ -253,6 +247,7 @@ Game.Play = function () {
   ];
   Context.ReplaceLinesInTextFile(txtPath, dict);
 
+  //ForceBindIP
   var id = Context.PlayerID + 1;
   var Bat = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ip.bat";
   var lines = [
@@ -281,7 +276,7 @@ Game.Play = function () {
       //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
     
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      // ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
+      ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
@@ -314,7 +309,7 @@ Game.Play = function () {
       // ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
 
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      // ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
+      ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
