@@ -14,7 +14,9 @@
     //The handler uses shared game saves, so each player should create his own profile to play.
 
 var answers1 = ["Yes", "No"];
+// var answers2 = ["Native", "Destination Paris"];
 Game.AddOption("Preserve aspect ratios?", "This option will prevent stretching windows.", "PRERATIO", answers1);
+// Game.AddOption("Mod", "The mod must be in the same folder as the native executable is.", "MOD", answers2);
 
 Game.KillMutex = ["CerrojoCommandos 2"];
 
@@ -26,33 +28,27 @@ Game.SymlinkFolders = false;
 Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "DATAEI.pop", "DATALE00.pop", "DATARO.pop"];
 //Game.FileSymlinkCopyInstead = [];
 //Game.DirSymlinkExclusions = [];
-//Game.DirSymlinkCopyInstead = ["Legacy"];
+Game.DirSymlinkCopyInstead = ["OUTPUT"];
 Game.HardcopyGame = false;
-Game.Description = "Start the game and wait till the instances reposition. Press END to lock/unlock the input.";
-
-Game.ExecutableName = "Comm2.exe";
-//Game.ExecutableContext = [""];
-//Game.ExecutableToLaunch = "Legacy\\comm2.exe";
-//Game.BinariesFolder = "Legacy";
+Game.ExecutableName = "comm2.exe";
 Game.SteamID = "6830";
 Game.GUID = "Commandos 2 Men of Courage";
 Game.GameName = "Commandos 2: Men of Courage";
 Game.DocumentsConfigPath = "Commandos II\\OUTPUT";
-//Game.UseGoldberg = true;
 Game.MaxPlayers = 6;
 Game.MaxPlayersOneMonitor = 6;
 
 Game.FakeFocus = true;
-Game.HookFocus = false;
-Game.ForceWindowTitle = true;
+// Game.ForceWindowTitle = true;
 Game.Hook.ForceFocusWindowName = "Commandos 2";
-Game.FakeFocusInterval =  5;
 Game.Hook.ForceFocus = true;
+Game.HookFocus = false;
+Game.SetWindowHookStart = true;
 Game.DontResize = true;
 Game.DontReposition = true;
 Game.HideTaskbar = true;
 Game.SetTopMostAtEnd = true;
-
+Game.Description = "Start the game and wait till the instances reposition. Press END to lock/unlock the input.";
 Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
 
@@ -64,7 +60,6 @@ Game.Hook.CustomDllEnabled = false;
 
 //USS deprecated options:
 
-Game.SupportsMultipleKeyboardsAndMice = false;
 Game.HookSetCursorPos = false;
 Game.HookGetCursorPos = false;
 Game.HookGetKeyState = false;
@@ -86,95 +81,11 @@ Game.HookReRegisterRawInputMouse = false;
 Game.HookReRegisterRawInputKeyboard = false;
 Game.DrawFakeMouseCursor = false;
 
-
-Game.Play = function() {
-
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
-  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
-  System.IO.File.Copy(savePkgOrigin, savePath, true);
-  
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
-  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
-  System.IO.File.Copy(savePkgOrigin, savePath, true);
-
-  /*
-  var txtPath = Context.DocumentsPlayer + "\\" + Context.DocumentsConfigPath + "\\OUTPUT\\COMM2.CFG";
-  
-  var dict = [
-    Context.FindLineNumberInTextFile(txtPath, ".NETGAMEPLAYER", Nucleus.SearchType.StartsWith) + "|.NETGAMEPLAYER " + Player.Nickname,
-  ];	
-Context.ReplaceLinesInTextFile(txtPath, dict);
-
-  var txtPath = Context.DocumentsPlayer + "\\" + Context.DocumentsConfigPath + "\\OUTPUT\\COMANDO.CFG";
-	if (Context.Width > 1024 && Context.Height > 768) {
-	Context.FindLineNumberInTextFile(txtPath, ".SIZE [ .INITSIZE", Nucleus.SearchType.StartsWith) + "|.SIZE [ .INITSIZE 4 ]"
-} else if (Context.Width > 800 && Context.Height > 600) {
-	Context.FindLineNumberInTextFile(txtPath, ".SIZE [ .INITSIZE", Nucleus.SearchType.StartsWith) + "|.SIZE [ .INITSIZE 3 ]"
-} else if (Context.Width > 640 && Context.Height > 480) {
-	Context.FindLineNumberInTextFile(txtPath, ".SIZE [ .INITSIZE", Nucleus.SearchType.StartsWith) + "|.SIZE [ .INITSIZE 2 ]"
-} else {
-	Context.FindLineNumberInTextFile(txtPath, ".SIZE [ .INITSIZE", Nucleus.SearchType.StartsWith) + "|.SIZE [ .INITSIZE 1 ]"
-}
-
-Context.ReplaceLinesInTextFile(txtPath, dict);
-*/
-
-var preratio = Context.Options["PRERATIO"];
-
-var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
-
-if (preratio == "Yes") {
-	Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [new Nucleus.IniSaveInfo("ddraw","maintas", "true")]);
-
-	var height = Context.Height;
-	var width = Context.Width;
-	var posY = Context.PosY;
-	var posX = Context.PosX;	
-  }
-
-  if (preratio == "No") {
-	Context.HideDesktop();
-
-	let HWidth = Math.ceil(Context.Width / 1.8);
-	let HPosX = Math.ceil((Context.Width - HWidth) / 2);
-	
-	let VHeight = Math.ceil(Context.Height / 1.3);
-	let VPosY = Math.ceil((Context.Height - VHeight) / 2);
-
-	if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
-	  var height = Context.Height;
-	  var width = HWidth;
-	  var posY = Context.PosY;
-	  var posX = HPosX;
-	} else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
-	  var height = VHeight;
-	  var width = Context.Width;
-	  var posY = VPosY;
-	  var posX = Context.PosX;
-	} else {
-	  var height = Context.Height;
-	  var width = Context.Width;
-	  var posY = Context.PosY;
-	  var posX = Context.PosX;
-	}
-  }
-
-  Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [
-	new Nucleus.IniSaveInfo("ddraw","windowed", "true"),
-	new Nucleus.IniSaveInfo("ddraw","border", "false"),
-	new Nucleus.IniSaveInfo("ddraw","singlecpu", "false"),
-	new Nucleus.IniSaveInfo("ddraw","height", height),
-	new Nucleus.IniSaveInfo("ddraw","width", width),
-	new Nucleus.IniSaveInfo("ddraw","posY", posY),
-	new Nucleus.IniSaveInfo("ddraw","posX", posX)
-  ]);
-};
-
 //ProtoInput
 
 Game.SupportsMultipleKeyboardsAndMice = true;
 
-Game.ProtoInput.InjectStartup = false;
+Game.ProtoInput.InjectStartup = true;
 Game.ProtoInput.InjectRuntime_RemoteLoadMethod = false;
 Game.ProtoInput.InjectRuntime_EasyHookMethod = true;
 Game.ProtoInput.InjectRuntime_EasyHookStealthMethod = false;
@@ -188,40 +99,129 @@ Game.ProtoInput.RenameHandlesHook = false;
 Game.ProtoInput.RenameHandles = [];
 Game.ProtoInput.RenameNamedPipes = [];
 
+Game.ProtoInput.RegisterRawInputHook = false;
+Game.ProtoInput.GetRawInputDataHook = false;
 Game.ProtoInput.MessageFilterHook = true;
-
+Game.ProtoInput.GetCursorPosHook = false;
+Game.ProtoInput.SetCursorPosHook = false;
+Game.ProtoInput.GetKeyStateHook = false;
+Game.ProtoInput.GetAsyncKeyStateHook = false;
+Game.ProtoInput.GetKeyboardStateHook = false;
+Game.ProtoInput.CursorVisibilityHook = false;
+Game.ProtoInput.ClipCursorHook = true;
+Game.ProtoInput.ClipCursorHookCreatesFakeClip = false;
 Game.ProtoInput.FocusHooks = true;
-Game.ProtoInput.BlockRawInputHooks = true;
-Game.ProtoInput.DinputOrderHooks = false;
-Game.ProtoInput.XinputHooks = false;
+Game.ProtoInput.drawFakeCursor = false;
+Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 
-Game.ProtoInput.dinputToXinputRedirection = false;
-Game.ProtoInput.useOpenXinput = false;
-
-Game.ProtoInput.showCursorWhenImageUpdated = false;
-Game.ProtoInput.allowMouseOutOfBounds = false;
-Game.ProtoInput.extendMouseBounds = false;
-Game.ProtoInput.toggleFakeCursorVisibilityShortcut = true;
-
-//Game.ProtoInput.DrawFakeCursor = true;
-Game.ProtoInput.AllowFakeCursorOutOfBounds = false;
-Game.ProtoInput.ExtendFakeCursorBounds = true;
+Game.ProtoInput.RawInputFilter = false;
+Game.ProtoInput.MouseMoveFilter = false;
+Game.ProtoInput.MouseActivateFilter = false;
+Game.ProtoInput.WindowActivateFilter = false;
+Game.ProtoInput.WindowActvateAppFilter = false;
+Game.ProtoInput.MouseWheelFilter = false;
+Game.ProtoInput.MouseButtonFilter = false;
+Game.ProtoInput.KeyboardButtonFilter = false;
 
 Game.ProtoInput.SendMouseMovementMessages = true;
 Game.ProtoInput.SendMouseButtonMessages = true;
 Game.ProtoInput.SendMouseWheelMessages = true;
 Game.ProtoInput.SendKeyboardButtonMessages = true;
+Game.ProtoInput.XinputHook = false;
+Game.ProtoInput.UseOpenXinput = false;
+Game.ProtoInput.UseDinputRedirection = false;
+Game.ProtoInput.DinputDeviceHook = false;
+Game.ProtoInput.DinputHookAlsoHooksGetDeviceState = false;
 
 Game.ProtoInput.EnableFocusMessageLoop = false;
-Game.ProtoInput.FocusLoopIntervalMilliseconds = 5;
 Game.ProtoInput.FocusLoop_WM_ACTIVATE = false;
+Game.ProtoInput.FocusLoop_WM_NCACTIVATE = false;
+Game.ProtoInput.FocusLoop_WM_ACTIVATEAPP = false;
 Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
-Game.ProtoInput.FocusLoop_WM_ACTIVATEAPP = false;
-Game.ProtoInput.FocusLoop_WM_NCACTIVATE = false;
-Game.ProtoInput.BlockedMessages = [ 0x0008]; // Blocks WM_KILLFOCUS
+Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS
 
-   Game.ProtoInput.OnInputLocked = function() {
+
+Game.Play = function () {
+
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  if (Context.Width >= 1024 && Context.Height >= 768) {
+    var mv = "2";
+  } else if (Context.Width >= 800 && Context.Height >= 600) {
+    var mv = "1";
+  } else {
+    var mv = "0";
+  }
+
+  var txtPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\OUTPUT\\COMM2.CFG";
+  var dict = [Context.FindLineNumberInTextFile(txtPath, "  .MODOVIDEO ", Nucleus.SearchType.StartsWith) + "|  .MODOVIDEO " + mv];
+  Context.ReplaceLinesInTextFile(txtPath, dict);
+
+  var preratio = Context.Options["PRERATIO"];
+  // var mod = Context.Options["MOD"];
+
+  var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
+
+  if (preratio == "Yes") {
+    Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [new Nucleus.IniSaveInfo("ddraw", "maintas", "true")]);
+
+    var height = Context.Height;
+    var width = Context.Width;
+    var posY = Context.PosY;
+    var posX = Context.PosX;
+  }
+
+  if (preratio == "No") {
+    Context.HideDesktop();
+
+    let HWidth = Math.ceil(Context.Width / 1.8);
+    let HPosX = Math.ceil((Context.Width - HWidth) / 2);
+
+    let VHeight = Math.ceil(Context.Height / 1.3);
+    let VPosY = Math.ceil((Context.Height - VHeight) / 2);
+
+    if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
+      var height = Context.Height;
+      var width = HWidth;
+      var posY = Context.PosY;
+      var posX = HPosX;
+    } else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
+      var height = VHeight;
+      var width = Context.Width;
+      var posY = VPosY;
+      var posX = Context.PosX;
+    } else {
+      var height = Context.Height;
+      var width = Context.Width;
+      var posY = Context.PosY;
+      var posX = Context.PosX;
+    }
+  }
+  /*
+   if (mod == "Native") {}
+   if (mod == "Destination Paris") {
+     Game.ExecutableToLaunch = "Comm2P.exe";
+     Game.FileSymlinkCopyInstead = ["Comm2P.dll", "ogg.dll"];
+     }
+ */
+  Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [
+    new Nucleus.IniSaveInfo("ddraw", "windowed", "true"),
+    new Nucleus.IniSaveInfo("ddraw", "border", "false"),
+    new Nucleus.IniSaveInfo("ddraw", "singlecpu", "false"),
+    new Nucleus.IniSaveInfo("ddraw", "height", height),
+    new Nucleus.IniSaveInfo("ddraw", "width", width),
+    new Nucleus.IniSaveInfo("ddraw", "posY", posY),
+    new Nucleus.IniSaveInfo("ddraw", "posX", posX)
+  ]);
+
+  Game.ProtoInput.OnInputLocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
@@ -248,11 +248,11 @@ Game.ProtoInput.BlockedMessages = [ 0x0008]; // Blocks WM_KILLFOCUS
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseWheelFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
-	  
+
     }
   };
 
-  Game.ProtoInput.OnInputUnlocked = function() {
+  Game.ProtoInput.OnInputUnlocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
@@ -279,3 +279,4 @@ Game.ProtoInput.BlockedMessages = [ 0x0008]; // Blocks WM_KILLFOCUS
 
     }
   };
+};
