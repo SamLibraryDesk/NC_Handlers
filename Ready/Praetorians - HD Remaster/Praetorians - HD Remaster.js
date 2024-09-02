@@ -114,9 +114,9 @@ Game.ProtoInput.GetAsyncKeyStateHook = false;
 Game.ProtoInput.GetKeyboardStateHook = false;
 Game.ProtoInput.CursorVisibilityHook = false;
 Game.ProtoInput.ClipCursorHook = true;
+Game.ProtoInput.ClipCursorHookCreatesFakeClip = true;
 Game.ProtoInput.FocusHooks = true;
 Game.ProtoInput.DrawFakeCursor = false;
-Game.ProtoInput.ClipCursorHookCreatesFakeClip = true;
 Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 
 Game.ProtoInput.RawInputFilter = false;
@@ -176,9 +176,9 @@ Game.Play = function () {
   if (quality == "Lowest") {var GFXquality = "0";}
   
   if (resquality == "High") {var RESquality = "100";}
-  if (resquality == "Medium") {var RESquality = "90";}
-  if (resquality == "Low") {var RESquality = "75";}
-  if (resquality == "Lowest") {var RESquality = "65";}
+  if (resquality == "Medium") {var RESquality = "80";}
+  if (resquality == "Low") {var RESquality = "65";}
+  if (resquality == "Lowest") {var RESquality = "55";}
 
   var configPath = Context.EnvironmentPlayer + "\\" + Context.UserProfileConfigPath + "\\Saved\\Config\\WindowsNoEditor\\GameUserSettings.ini";
   
@@ -204,14 +204,14 @@ Game.Play = function () {
   
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+        ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
         ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-        ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
-  
+        
         //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
         //ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
   
@@ -236,17 +236,20 @@ Game.Play = function () {
     Game.ProtoInput.OnInputUnlocked = function() {
       for (var i = 0; i < PlayerList.Count; i++) {
         var player = PlayerList[i];
-  
+		
+        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
+        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
         ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
-        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
-        ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
-  
+		
+        //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
+        //ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
+        
         ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
         ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
         ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
