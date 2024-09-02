@@ -13,7 +13,7 @@
 /// Notes
     //Ok
 
-var answers0 = ["Yes", "No"];
+var answers0 = ["Yes", "Vertical & horizontal players only", "No"];
 var answers1 = ["60", "30"];
 var answers2 = ["Normal", "Fast"];
 var answers3 = ["Normal", "Slow", "Fast"];
@@ -65,7 +65,7 @@ Game.SteamID = "612300";
 Game.MaxPlayers = 12;
 Game.MaxPlayersOneMonitor = 12;
 Game.FakeFocus = true;
-Game.FakeFocusInterval =  100;
+Game.FakeFocusInterval = 100;
 Game.HookFocus = false;
 Game.ForceWindowTitle = true;
 Game.Hook.ForceFocusWindowName = "Sudden Strike Forever";
@@ -76,18 +76,18 @@ Game.IgnoreWindowBordercheck = true;
 Game.DontRemoveBorders = true;
 Game.SetTopMostAtEnd = true;
 Game.HideTaskbar = true;
+
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
 Game.Hook.XInputEnabled = false;
 Game.Hook.XInputReroute = false;
 Game.Hook.CustomDllEnabled = false;
-Game.Description = "Create a multiplayer game with one and join with the others without setting any IP, if the hosted game not showing set IP by pressing F5 or set 127.0.0.1  \n\nPress END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
+Game.Description = "Create a multiplayer game with one instance and join with the rest. If the hosted game is not showing, you can manually enter the localhost IP: 127.0.0.1\n\nPress END to lock and grant each player control, you can press END again to unlock input. While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
 
 //USS deprecated options:
 
-Game.SupportsMultipleKeyboardsAndMice = false;
 Game.HookSetCursorPos = false;
 Game.HookGetCursorPos = false;
 Game.HookGetKeyState = false;
@@ -138,7 +138,7 @@ Game.ProtoInput.GetKeyboardStateHook = false;
 Game.ProtoInput.CursorVisibilityHook = false;
 Game.ProtoInput.ClipCursorHook = true;
 Game.ProtoInput.FocusHooks = true;
-Game.ProtoInput.DrawFakeCursor = true;
+Game.ProtoInput.DrawFakeCursor = false;
 Game.ProtoInput.ClipCursorHookCreatesFakeClip = true;
 Game.ProtoInput.EnableToggleFakeCursorVisibilityShortcut = false;
 
@@ -166,9 +166,9 @@ Game.ProtoInput.FocusLoop_WM_NCACTIVATE = false;
 Game.ProtoInput.FocusLoop_WM_ACTIVATEAPP = false;
 Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
-Game.ProtoInput.BlockedMessages = [ 0x0008]; // Blocks WM_KILLFOCUS
+Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS
 
-Game.Play = function() {
+Game.Play = function () {
   var preratio = Context.Options["PRERATIO"];
   var fpscap = Context.Options["FPSCAP"];
   var gamespeed = Context.Options["GAMESPEED"];
@@ -187,18 +187,18 @@ Game.Play = function() {
   var res10 = Context.Options["P11Res"];
   var res11 = Context.Options["P12Res"];
 
-  if (Context.PlayerID == 0) {var res = res0}
-  if (Context.PlayerID == 1) {var res = res1}
-  if (Context.PlayerID == 2) {var res = res2}
-  if (Context.PlayerID == 3) {var res = res3}
-  if (Context.PlayerID == 4) {var res = res4}
-  if (Context.PlayerID == 5) {var res = res5}
-  if (Context.PlayerID == 6) {var res = res6}
-  if (Context.PlayerID == 7) {var res = res7}
-  if (Context.PlayerID == 8) {var res = res8}
-  if (Context.PlayerID == 9) {var res = res9}
-  if (Context.PlayerID == 10) {var res = res10}
-  if (Context.PlayerID == 11) {var res = res11}
+  if (Context.PlayerID == 0) { var res = res0 }
+  if (Context.PlayerID == 1) { var res = res1 }
+  if (Context.PlayerID == 2) { var res = res2 }
+  if (Context.PlayerID == 3) { var res = res3 }
+  if (Context.PlayerID == 4) { var res = res4 }
+  if (Context.PlayerID == 5) { var res = res5 }
+  if (Context.PlayerID == 6) { var res = res6 }
+  if (Context.PlayerID == 7) { var res = res7 }
+  if (Context.PlayerID == 8) { var res = res8 }
+  if (Context.PlayerID == 9) { var res = res9 }
+  if (Context.PlayerID == 10) { var res = res10 }
+  if (Context.PlayerID == 11) { var res = res11 }
 
   var userPath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\resolutions");
   System.IO.Directory.CreateDirectory(userPath);
@@ -206,11 +206,11 @@ Game.Play = function() {
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
-  
+
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "ddraw.ini");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
-  
+
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\dinput.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "dinput.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
@@ -282,54 +282,40 @@ Game.Play = function() {
   var sudPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\sudtest.ini";
   var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
 
-  if (preratio == "Yes") {
-	Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [new Nucleus.IniSaveInfo("ddraw","maintas", "true")]);
-  Game.SetWindowHook = true;
-	
-	var height = Context.Height;
-	var width = Context.Width;
-	var posY = Context.PosY;
-	var posX = Context.PosX;
-	}
-	
-  if (preratio == "No") {
-	Context.HideDesktop();
-
-	let HWidth = Math.ceil(Context.Width / 1.8);
-	let HPosX = Math.ceil((Context.Width - HWidth) / 2);
-
-	if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
-	  var height = Context.Height;
-	  var width = HWidth;
-	  var posY = Context.PosY;
-	  var posX = HPosX;
-	} else {
-	  var height = Context.Height;
-	  var width = Context.Width;
-	  var posY = Context.PosY;
-	  var posX = Context.PosX;
-	  }
+  if (preratio == "Yes") { var prevr = "true" }
+  if (preratio == "No") { var prevr = "false" }
+  if (preratio == "Vertical & horizontal players only") {
+    if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56 || Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
+      var prevr = "true"
+    }
   }
 
+  var height = Context.Height;
+  var width = Context.Width;
+  var posY = Context.PosY;
+  var posX = Context.PosX;
+
   Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [
-	new Nucleus.IniSaveInfo("ddraw","windowed", "true"),
-	new Nucleus.IniSaveInfo("ddraw","border", "false"),
-	new Nucleus.IniSaveInfo("ddraw","singlecpu", "false"),
-	new Nucleus.IniSaveInfo("ddraw","maxfps", fpscap),
-	new Nucleus.IniSaveInfo("ddraw","height", height),
-	new Nucleus.IniSaveInfo("ddraw","width", width),
-	new Nucleus.IniSaveInfo("ddraw","posY", posY),
-	new Nucleus.IniSaveInfo("ddraw","posX", posX)
+    new Nucleus.IniSaveInfo("ddraw", "windowed", "true"),
+    new Nucleus.IniSaveInfo("ddraw", "border", "false"),
+    new Nucleus.IniSaveInfo("ddraw", "singlecpu", "false"),
+    // new Nucleus.IniSaveInfo("ddraw", "devmode", "true"), // Breaks the arrow buttons in Sudden Strike
+    new Nucleus.IniSaveInfo("ddraw", "maxfps", fpscap),
+    new Nucleus.IniSaveInfo("ddraw", "maintas", prevr),
+    new Nucleus.IniSaveInfo("ddraw", "height", height),
+    new Nucleus.IniSaveInfo("ddraw", "width", width),
+    new Nucleus.IniSaveInfo("ddraw", "posY", posY),
+    new Nucleus.IniSaveInfo("ddraw", "posX", posX)
   ]);
 
-  if (gamespeed == "Fast") {var gS = "8";}
-  if (gamespeed == "Normal") {var gS = "5";}
-  if (mousespeed == "Fast") {var mS = "23";}
-  if (mousespeed == "Normal") {var mS = "17";}
-  if (mousespeed == "Slow") {var mS = "8";}
-  if (kbspeed == "Fast") {var kS = "25";}
-  if (kbspeed == "Normal") {var kS = "18";}
-  if (kbspeed == "Slow") {var kS = "8";}
+  if (gamespeed == "Fast") { var gS = "8"; }
+  if (gamespeed == "Normal") { var gS = "5"; }
+  if (mousespeed == "Fast") { var mS = "23"; }
+  if (mousespeed == "Normal") { var mS = "17"; }
+  if (mousespeed == "Slow") { var mS = "8"; }
+  if (kbspeed == "Fast") { var kS = "25"; }
+  if (kbspeed == "Normal") { var kS = "18"; }
+  if (kbspeed == "Slow") { var kS = "8"; }
 
   if (res == "Automatic") {
     if (Context.Width >= 1920 && Context.Height >= 1080) {
@@ -370,16 +356,16 @@ Game.Play = function() {
   }
 
   Context.ModifySaveFile(sudPath, sudPath, Nucleus.SaveType.INI, [
-	new Nucleus.IniSaveInfo("Game", "SSDraw3", "resolutions\\cad" + cad + ".dll"),
-	new Nucleus.IniSaveInfo("Game", "KeyboardScroll", kS),
-	new Nucleus.IniSaveInfo("Game", "MouseScroll", mS),
-	new Nucleus.IniSaveInfo("Game", "MultiSpeed", gS),
-	new Nucleus.IniSaveInfo("Game", "VideoMode", "3"),
-	new Nucleus.IniSaveInfo("Game", "Player0", Context.Nickname)
-  ]); 
+    new Nucleus.IniSaveInfo("Game", "SSDraw3", "resolutions\\cad" + cad + ".dll"),
+    new Nucleus.IniSaveInfo("Game", "KeyboardScroll", kS),
+    new Nucleus.IniSaveInfo("Game", "MouseScroll", mS),
+    new Nucleus.IniSaveInfo("Game", "MultiSpeed", gS),
+    new Nucleus.IniSaveInfo("Game", "VideoMode", "3"),
+    new Nucleus.IniSaveInfo("Game", "Player0", Context.Nickname)
+  ]);
 
-  Game.ProtoInput.OnInputLocked = function() {
-	for (var i = 0; i < PlayerList.Count; i++) {
+  Game.ProtoInput.OnInputLocked = function () {
+    for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
@@ -403,7 +389,7 @@ Game.Play = function() {
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseWheelFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
-	  
+
       ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 0, true, true, true, true, true);
 
       System.Threading.Thread.Sleep(1000);
@@ -412,7 +398,7 @@ Game.Play = function() {
     }
   };
 
-  Game.ProtoInput.OnInputUnlocked = function() {
+  Game.ProtoInput.OnInputUnlocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
