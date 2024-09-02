@@ -11,7 +11,7 @@
     //Ok
 
 /// Notes
-    // Not able to change the nickname.
+    // Not able to change the nickname. Also game crash whenever back to main menu.
 
 var answers1 = ["Ultra", "High", "Medium", "Low"];
 Game.AddOption("Set Graphics option", "", "GFXSET", answers1);
