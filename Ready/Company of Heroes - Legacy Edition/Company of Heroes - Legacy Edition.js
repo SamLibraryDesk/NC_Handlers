@@ -19,7 +19,7 @@ Game.AddOption("Set Graphics option", "", "GFXSET", answers1);
 Game.KillMutexType = "Event";
 Game.KillMutex = ["{bb6f297c-b959-4958-b993-55d9e6bfe109}"];
 
-Game.DirSymlinkCopyInstead = [ "validators" ];
+Game.DirSymlinkCopyInstead = ["validators"];
 Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
 Game.FileSymlinkExclusions = ["steam_api.dll"];
 Game.GameName = "Company of Heroes - Legacy Edition";
@@ -43,12 +43,12 @@ Game.Hook.ForceFocus = true;
 Game.HookFocus = false;
 Game.SetWindowHook = true;
 Game.Hook.ForceFocusWindowName = "Company Of Heroes";
-Game.WindowStyleValues = [ "0x40000000", "~0x400000", "~0x40000" ];
+Game.WindowStyleValues = ["0x40000000", "~0x400000", "~0x40000"];
 // Game.ResetWindows = true;
 Game.RefreshWindowAfterStart = true;
 
 Game.Description = "Create multiplayer game and join with the others. \n" +
-"Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
+  "Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances."
 Game.PauseBetweenContextAndLaunch = 3;
 Game.PauseBetweenProcessGrab = 5;
 Game.PauseBetweenStarts = 15;
@@ -140,7 +140,7 @@ Game.ProtoInput.FocusLoop_WM_NCACTIVATE = false;
 Game.ProtoInput.FocusLoop_WM_ACTIVATEAPP = false;
 Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
-Game.ProtoInput.BlockedMessages = [ 0x0008 ]; // Blocks WM_KILLFOCUS
+Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS
 
 Game.Play = function () {
 
@@ -253,16 +253,16 @@ Game.Play = function () {
   var lines = [
     '"' +
     Context.NucleusFolder +
-    '\\utils\\ForceBindIP\\ForceBindIP.exe" 127.0.0.' +id +
+    '\\utils\\ForceBindIP\\ForceBindIP.exe" 127.0.0.' + id +
     ' "' +
     Context.GetFolder(Nucleus.Folder.InstancedGameFolder) +
     '\\RelicCOH.exe"+ ' + Args + ''];
-    Context.WriteTextFile(Bat, lines);
-  
-  Game.ProtoInput.OnInputLocked = function() {
+  Context.WriteTextFile(Bat, lines);
+
+  Game.ProtoInput.OnInputLocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
-    
+
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
@@ -272,9 +272,9 @@ Game.Play = function () {
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
       // ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-    
+
       //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
-    
+
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
@@ -285,16 +285,16 @@ Game.Play = function () {
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
 
       ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, true);
-          
+
       ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 0, true, true, true, true, true);
-    
+
       System.Threading.Thread.Sleep(1000);
-    
+
       ProtoInput.StopFocusMessageLoop(player.ProtoInputInstanceHandle);
     }
   };
 
-  Game.ProtoInput.OnInputUnlocked = function() {
+  Game.ProtoInput.OnInputUnlocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
@@ -318,7 +318,7 @@ Game.Play = function () {
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
 
       ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
-    
+
       ProtoInput.StartFocusMessageLoop(player.ProtoInputInstanceHandle, 5000, true, true, true, true, true);
 
       // System.Threading.Thread.Sleep(1000);
