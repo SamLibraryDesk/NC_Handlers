@@ -21,14 +21,15 @@ Game.HandlerInterval = 100;
 Game.SymlinkExe = false;
 Game.SymlinkGame = true;
 Game.SymlinkFolders = false;
-Game.FileSymlinkExclusions = ["dinput8.dll", "player0.cfg", "player0.sav", "players.dir", "Midtown.exe", "1560.ar", "freetype.dll", "Hook1560.dll", "Hook1560.pdb", "Open1560.map", "Open1560.pdb", "SDL2.dll", "MM.HLP"];
+Game.FileSymlinkExclusions = ["dinput.dll", "Xidi.ini", "player0.cfg", "player0.sav", "players.dir", "Midtown.exe", "1560.ar", "freetype.dll", "Hook1560.dll", "Hook1560.pdb", "Open1560.map", "Open1560.pdb", "SDL2.dll", "MM.HLP"];
 Game.FileSymlinkCopyInstead = ["video.cfg"];
-Game.DirSymlinkCopyInstead = [ "players"];
+Game.DirSymlinkCopyInstead = ["players"];
 Game.HardcopyGame = false;
-Game.Description = 
-"This handler uses Open1560 mod.\n" +
-"If want to play with multiple controllers make sure to hide DirectInput controllers using hide hide or whatever and use Xinput controllers instead.\n" +
-"Press the END key to lock/unlock the input. You can also use CTRL+Q to close Nucleus and all its instances.";
+Game.Description =
+  "This handler uses Open1560 mod.\n" +
+  "If want to play with multiple controllers make sure to hide DirectInput controllers using hide hide or whatever.\n" +
+  "Create multiplayer game with one player and join with the rest.\n" +
+  "Press the END key to lock/unlock the input. You can also use CTRL+Q to close Nucleus and all its instances.";
 
 Game.ExecutableName = "Midtown.exe";
 Game.GUID = "Midtown Madness";
@@ -42,7 +43,7 @@ Game.FakeFocus = true;
 Game.HookFocus = false;
 Game.ForceWindowTitle = true;
 Game.Hook.ForceFocusWindowName = "Midtown Madness!";
-Game.FakeFocusInterval =  100;
+Game.FakeFocusInterval = 100;
 Game.Hook.ForceFocus = true;
 Game.DontResize = true;
 Game.HideTaskbar = true;
@@ -63,7 +64,6 @@ Game.Hook.CustomDllEnabled = false;
 
 //USS deprecated options:
 
-Game.SupportsMultipleKeyboardsAndMice = false;
 Game.HookSetCursorPos = false;
 Game.HookGetCursorPos = false;
 Game.HookGetKeyState = false;
@@ -131,10 +131,10 @@ Game.ProtoInput.SendMouseMovementMessages = true;
 Game.ProtoInput.SendMouseButtonMessages = true;
 Game.ProtoInput.SendMouseWheelMessages = true;
 Game.ProtoInput.SendKeyboardButtonMessages = true;
-Game.ProtoInput.XinputHook = false;
-Game.ProtoInput.UseOpenXinput = false;
+Game.ProtoInput.XinputHook = true;
+Game.ProtoInput.UseOpenXinput = true;
 Game.ProtoInput.UseDinputRedirection = false;
-Game.ProtoInput.DinputDeviceHook = true;
+// Game.ProtoInput.DinputDeviceHook = true;
 Game.ProtoInput.DinputHookAlsoHooksGetDeviceState = false;
 
 Game.ProtoInput.BlockRawInputHook = true; //Fixes controllers issue
@@ -147,7 +147,15 @@ Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
 Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS // Blocks WM_INPUT
 
-Game.Play = function() {
+Game.Play = function () {
+
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\dinput.dll");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "xidi-dinput.dll");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Xidi.ini");
+  var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "Xidi.ini");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
 
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Midtown.exe");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "Open1560.exe");
@@ -180,32 +188,32 @@ Game.Play = function() {
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\SDL2.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "SDL2.dll");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
-  
+
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\players.dir");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "players.dir");
   System.IO.File.Copy(savePkgOrigin, savePath, true);
-  
+
   if (Context.IsKeyboardPlayer) {
-	 var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.cfg");
-	 var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerKeyboard.cfg");
-	 System.IO.File.Copy(savePkgOrigin, savePath, true);
-	 
-	 var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.sav");
-	 var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerKeyboard.sav");
-	 System.IO.File.Copy(savePkgOrigin, savePath, true);
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.cfg");
+    var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerKeyboard.cfg");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.sav");
+    var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerKeyboard.sav");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
   } else {
-	 var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.cfg");
-	 var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerController.cfg");
-	 System.IO.File.Copy(savePkgOrigin, savePath, true);
-	 
-	 var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.sav");
-	 var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerController.sav");
-	 System.IO.File.Copy(savePkgOrigin, savePath, true);
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.cfg");
+    var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerController.cfg");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\players\\player0.sav");
+    var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "playerController.sav");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
   }
 
   Context.StartArguments = " -window -noborder -width " + Context.Width + ", -height " + Context.Height + ",";
 
- Game.ProtoInput.MultipleProtoControllers = true;
+  Game.ProtoInput.MultipleProtoControllers = true;
   var numPlayers = 0;
   for (var i = 0; i < PlayerList.Count; i++) {
     var player = PlayerList[i];
@@ -216,26 +224,26 @@ Game.Play = function() {
     player.ProtoController2 = Context.GamepadId;
     player.ProtoController3 = Context.GamepadId;
     player.ProtoController4 = Context.GamepadId;
-	player.ProtoController5 = Context.GamepadId;
-	player.ProtoController6 = Context.GamepadId;
-	player.ProtoController7 = Context.GamepadId;
-	player.ProtoController8 = Context.GamepadId;
+    player.ProtoController5 = Context.GamepadId;
+    player.ProtoController6 = Context.GamepadId;
+    player.ProtoController7 = Context.GamepadId;
+    player.ProtoController8 = Context.GamepadId;
   }
- 
-   Game.ProtoInput.OnInputLocked = function() {
+
+  Game.ProtoInput.OnInputLocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
-	  
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-	  ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.FocusHooksHookID);
+
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
+      ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.FocusHooksHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
-       	   
+
       //ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
 
       //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
@@ -250,11 +258,11 @@ Game.Play = function() {
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseWheelFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
-	  
+
     }
   };
 
-  Game.ProtoInput.OnInputUnlocked = function() {
+  Game.ProtoInput.OnInputUnlocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
@@ -264,10 +272,10 @@ Game.Play = function() {
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-	  ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.FocusHooksHookID);
-	  ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.FocusHooksHookID);
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
-	  
+
       //ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
 
       ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
