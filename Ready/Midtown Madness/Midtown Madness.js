@@ -213,23 +213,6 @@ Game.Play = function () {
 
   Context.StartArguments = " -window -noborder -width " + Context.Width + ", -height " + Context.Height + ",";
 
-  Game.ProtoInput.MultipleProtoControllers = true;
-  var numPlayers = 0;
-  for (var i = 0; i < PlayerList.Count; i++) {
-    var player = PlayerList[i];
-    if (player.IsXInput && player.ScreenIndex !== -1) {
-      numPlayers++;
-    }
-    player.ProtoController1 = Context.GamepadId;
-    player.ProtoController2 = Context.GamepadId;
-    player.ProtoController3 = Context.GamepadId;
-    player.ProtoController4 = Context.GamepadId;
-    player.ProtoController5 = Context.GamepadId;
-    player.ProtoController6 = Context.GamepadId;
-    player.ProtoController7 = Context.GamepadId;
-    player.ProtoController8 = Context.GamepadId;
-  }
-
   Game.ProtoInput.OnInputLocked = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
