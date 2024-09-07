@@ -32,6 +32,7 @@ Game.SteamID = "4560";
 Game.GUID = "Company of Heroes";
 Game.LauncherExe = "ip.bat";
 Game.LauncherExeIgnoreFileCheck = true;
+Game.KillProcessesOnClose = ["RelicDownloader"];
 Game.MaxPlayers = 8;
 Game.MaxPlayersOneMonitor = 8;
 Game.UseGoldberg = true;
