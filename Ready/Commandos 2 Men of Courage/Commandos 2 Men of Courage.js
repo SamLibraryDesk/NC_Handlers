@@ -5,17 +5,17 @@
     //Ok
 
 /// Window manipulation
-    // It's ok to use CNC-ddraw settings but in game resolutions optins could be found in cfg file.
+    //Ok
 
 /// Configs
     //Ok
 
 /// Notes
-    //The handler uses shared game saves, so each player should create his own profile to play.
+    //Null
 
 var answers1 = ["Yes", "No"];
 // var answers2 = ["Native", "Destination Paris"];
-Game.AddOption("Preserve aspect ratios?", "This option will prevent stretching windows.", "PRERATIO", answers1);
+Game.AddOption("Enable HD resolutions?", "To get rid of black borders and fit the exact monitor aspect HD should be enabled.", "HD", answers1);
 // Game.AddOption("Mod", "The mod must be in the same folder as the native executable is.", "MOD", answers2);
 
 Game.KillMutex = ["CerrojoCommandos 2"];
@@ -26,31 +26,34 @@ Game.SymlinkExe = false;
 Game.SymlinkGame = true;
 Game.SymlinkFolders = false;
 Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "DATAEI.pop", "DATALE00.pop", "DATARO.pop"];
-//Game.FileSymlinkCopyInstead = [];
-//Game.DirSymlinkExclusions = [];
-Game.DirSymlinkCopyInstead = ["OUTPUT"];
+Game.DirSymlinkCopyInstead = ["OUTPUT", "DATA"];
 Game.HardcopyGame = false;
 Game.ExecutableName = "comm2.exe";
 Game.SteamID = "6830";
 Game.GUID = "Commandos 2 Men of Courage";
 Game.GameName = "Commandos 2: Men of Courage";
 Game.DocumentsConfigPath = "Commandos II\\OUTPUT";
+Game.KeepSymLinkOnExit = true;
 Game.MaxPlayers = 6;
 Game.MaxPlayersOneMonitor = 6;
 
 Game.FakeFocus = true;
-// Game.ForceWindowTitle = true;
 Game.Hook.ForceFocusWindowName = "Commandos 2";
 Game.Hook.ForceFocus = true;
 Game.HookFocus = false;
-Game.SetWindowHookStart = true;
+Game.SetWindowHook = true;
 Game.DontResize = true;
-Game.DontReposition = true;
 Game.HideTaskbar = true;
-Game.SetTopMostAtEnd = true;
-Game.Description = "Start the game and wait till the instances reposition. Press END to lock/unlock the input.";
+Game.Description =
+  "Make sure to run the base game once before using Nucleus.\n" +
+  "If you've the Steam/GoG version be sure to select the legacy version.\n\n" +
+  "Start the game and wait till the instances reposition.\n" +
+  "Create multiplayer game and join with the rest.\n" +
+  "Press END to lock/unlock the inputs.\n\n" +
+  "You can press CTRL+Q to close Nucleus and all of its instances.";
+Game.PauseBetweenContextAndLaunch = 3;
 Game.PauseBetweenProcessGrab = 3;
-Game.PauseBetweenStarts = 10;
+Game.PauseBetweenStarts = 5;
 
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
@@ -85,7 +88,7 @@ Game.DrawFakeMouseCursor = false;
 
 Game.SupportsMultipleKeyboardsAndMice = true;
 
-Game.ProtoInput.InjectStartup = true;
+Game.ProtoInput.InjectStartup = false;
 Game.ProtoInput.InjectRuntime_RemoteLoadMethod = false;
 Game.ProtoInput.InjectRuntime_EasyHookMethod = true;
 Game.ProtoInput.InjectRuntime_EasyHookStealthMethod = false;
@@ -141,8 +144,11 @@ Game.ProtoInput.FocusLoop_WM_SETFOCUS = false;
 Game.ProtoInput.FocusLoop_WM_MOUSEACTIVATE = false;
 Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS
 
-
 Game.Play = function () {
+
+  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\comm2.exe");
+  var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder, "comm2.exe");
+  System.IO.File.Copy(savePkgOrigin, savePath, true);
 
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
@@ -164,61 +170,138 @@ Game.Play = function () {
   var dict = [Context.FindLineNumberInTextFile(txtPath, "  .MODOVIDEO ", Nucleus.SearchType.StartsWith) + "|  .MODOVIDEO " + mv];
   Context.ReplaceLinesInTextFile(txtPath, dict);
 
-  var preratio = Context.Options["PRERATIO"];
   // var mod = Context.Options["MOD"];
-
-  var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
-
-  if (preratio == "Yes") {
-    Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [new Nucleus.IniSaveInfo("ddraw", "maintas", "true")]);
-
-    var height = Context.Height;
-    var width = Context.Width;
-    var posY = Context.PosY;
-    var posX = Context.PosX;
-  }
-
-  if (preratio == "No") {
-    Context.HideDesktop();
-
-    let HWidth = Math.ceil(Context.Width / 1.8);
-    let HPosX = Math.ceil((Context.Width - HWidth) / 2);
-
-    let VHeight = Math.ceil(Context.Height / 1.3);
-    let VPosY = Math.ceil((Context.Height - VHeight) / 2);
-
-    if (Context.AspectRatioDecimal >= 3.55 && Context.AspectRatioDecimal <= 3.56) {
-      var height = Context.Height;
-      var width = HWidth;
-      var posY = Context.PosY;
-      var posX = HPosX;
-    } else if (Context.AspectRatioDecimal >= 0.87 && Context.AspectRatioDecimal <= 0.89) {
-      var height = VHeight;
-      var width = Context.Width;
-      var posY = VPosY;
-      var posX = Context.PosX;
-    } else {
-      var height = Context.Height;
-      var width = Context.Width;
-      var posY = Context.PosY;
-      var posX = Context.PosX;
-    }
-  }
-  /*
+  /*  
    if (mod == "Native") {}
    if (mod == "Destination Paris") {
      Game.ExecutableToLaunch = "Comm2P.exe";
      Game.FileSymlinkCopyInstead = ["Comm2P.dll", "ogg.dll"];
      }
  */
+
+  var hd = Context.Options["HD"];
+
+  if (hd == "Yes") {
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "80 02 00 00 C3 B8",
+      Context.Width,
+      1,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "C3 B8 20 03 00 00",
+      Context.Width,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "C3 B8 00 04 00 00 C3 B8",
+      Context.Width,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "F4 D0 4E 00 BA 80 02 00 00",
+      Context.Width,
+      6,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "13 BA 20 03 00 00",
+      Context.Width,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "EB 0C BA 00 04 00 00",
+      Context.Width,
+      4,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "E0 01 00 00 C3 B8",
+      Context.Height,
+      1,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "C3 B8 58 02 00 00",
+      Context.Height,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "C3 B8 00 03 00 00",
+      Context.Height,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "44 24 04 B9 E0 01 00 00",
+      Context.Height,
+      5,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "04 B9 58 02 00 00",
+      Context.Height,
+      3,
+      true
+    );
+
+    Context.PatchFileFindPattern(
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
+      "04 B9 00 03 00 00",
+      Context.Height,
+      3,
+      true
+    );
+  }
+
+  var cncPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ddraw.ini";
   Context.ModifySaveFile(cncPath, cncPath, Nucleus.SaveType.INI, [
     new Nucleus.IniSaveInfo("ddraw", "windowed", "true"),
     new Nucleus.IniSaveInfo("ddraw", "border", "false"),
     new Nucleus.IniSaveInfo("ddraw", "singlecpu", "false"),
-    new Nucleus.IniSaveInfo("ddraw", "height", height),
-    new Nucleus.IniSaveInfo("ddraw", "width", width),
-    new Nucleus.IniSaveInfo("ddraw", "posY", posY),
-    new Nucleus.IniSaveInfo("ddraw", "posX", posX)
+    // new Nucleus.IniSaveInfo("ddraw", "devmode", "true"),
+    new Nucleus.IniSaveInfo("ddraw", "maintas", "true"),
+    new Nucleus.IniSaveInfo("ddraw", "height", Context.Height),
+    new Nucleus.IniSaveInfo("ddraw", "width", Context.Width),
+    new Nucleus.IniSaveInfo("ddraw", "posY", Context.PosY),
+    new Nucleus.IniSaveInfo("ddraw", "posX", Context.PosX)
   ]);
 
   Game.ProtoInput.OnInputLocked = function () {
@@ -227,27 +310,26 @@ Game.Play = function () {
 
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+      // ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
       ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-      //ProtoInput.InstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
 
       //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
-      //ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
-
-      //ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, true);
+      // ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
 
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseWheelFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.EnableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
+
+      // ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, true);
 
     }
   };
@@ -256,26 +338,28 @@ Game.Play = function () {
     for (var i = 0; i < PlayerList.Count; i++) {
       var player = PlayerList[i];
 
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
+      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
+      // ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetCursorPosHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.SetCursorPosHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetAsyncKeyStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetKeyboardStateHookID);
       ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.CursorVisibilityStateHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.GetRawInputDataHookID);
-      ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.RegisterRawInputHookID);
-      //ProtoInput.UninstallHook(player.ProtoInputInstanceHandle, ProtoInput.Values.MessageFilterHookID);
 
-      //ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
+      //Avoid the mouse move filter unless absolutely necessary as it can massively affect performance if the game gets primary input from mouse move messages
+      // ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
 
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.RawInputFilterID);
-      ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseMoveFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.WindowActivateAppFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseWheelFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.MouseButtonFilterID);
       ProtoInput.DisableMessageFilter(player.ProtoInputInstanceHandle, ProtoInput.Values.KeyboardButtonFilterID);
+
+      // ProtoInput.SetDrawFakeCursor(player.ProtoInputInstanceHandle, false);
 
     }
   };
