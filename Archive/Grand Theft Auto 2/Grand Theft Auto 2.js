@@ -222,7 +222,7 @@ Game.Play = function () {
   Context.EditRegKey("HKEY_CURRENT_USER", "SOFTWARE\\DMA Design Ltd\\GTA2\\Control", "8", "32772", Nucleus.RegType.DWord);
   Context.EditRegKey("HKEY_CURRENT_USER", "SOFTWARE\\DMA Design Ltd\\GTA2\\Control", "9", "32769", Nucleus.RegType.DWord);
   Context.EditRegKey("HKEY_CURRENT_USER", "SOFTWARE\\DMA Design Ltd\\GTA2\\Control", "10", "32777", Nucleus.RegType.DWord);
-  // Context.EditRegKey("HKEY_CURRENT_USER", "SOFTWARE\\DMA Design Ltd\\GTA2\\Control", "11", "54", Nucleus.RegType.DWord);
+  Context.EditRegKey("HKEY_CURRENT_USER", "SOFTWARE\\DMA Design Ltd\\GTA2\\Control", "11", "32776", Nucleus.RegType.DWord);
 
   var dxwndPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\dxwnd.ini";
   Context.ModifySaveFile(dxwndPath, dxwndPath, Nucleus.SaveType.INI, [
