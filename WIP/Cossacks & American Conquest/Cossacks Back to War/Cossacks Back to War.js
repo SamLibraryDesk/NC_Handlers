@@ -41,7 +41,7 @@ Game.KillProcessesOnClose = ["AutoHotkeyA32"]; //Close AHK app
 Game.Description =
   "Create a multiplayer game (TCP/IP Lan connection) with one and join with the others without setting any IP.\n" +
   "Press END to lock/unlock the inputs, While input is unlocked you can press CTRL+Q to close Nucleus and all of its instances.\n\n" +
-  "PS: If the bottom instances have cutoff press middile mouse button on the window (this will work on 1080 or 768 height screens)."
+  "PS: If the bottom instances have cutoff press middle mouse button on the window (this will work on 1080 or 768 height screens)."
 Game.PauseBetweenContextAndLaunch = 3;
 Game.PauseBetweenProcessGrab = 3;
 Game.PauseBetweenStarts = 10;
