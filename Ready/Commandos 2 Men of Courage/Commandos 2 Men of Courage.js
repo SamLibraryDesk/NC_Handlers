@@ -13,9 +13,9 @@
 /// Notes
     //Null
 
-var answers1 = ["Yes", "No"];
+var answers1 = ["Enable", "Disable"];
 // var answers2 = ["Native", "Destination Paris"];
-Game.AddOption("Enable HD resolutions?", "To get rid of black borders and fit the exact monitor aspect HD should be enabled.", "HD", answers1);
+Game.AddOption("HD Resolutions?", "Enable: Get rid of black borders and fit the exact monitor aspect.\n\n Disable: Good for low end PCs.", "HD", answers1);
 // Game.AddOption("Mod", "The mod must be in the same folder as the native executable is.", "MOD", answers2);
 
 Game.KillMutex = ["CerrojoCommandos 2"];
@@ -27,6 +27,7 @@ Game.SymlinkGame = true;
 Game.SymlinkFolders = false;
 Game.FileSymlinkExclusions = ["DDraw.dll", "ddraw.ini", "DATAEI.pop", "DATALE00.pop", "DATARO.pop"];
 Game.DirSymlinkCopyInstead = ["OUTPUT", "DATA"];
+// Game.DirSymlinkCopyInsteadIncludeSubFolders = true;
 Game.HardcopyGame = false;
 Game.ExecutableName = "comm2.exe";
 Game.SteamID = "6830";
@@ -45,15 +46,15 @@ Game.SetWindowHook = true;
 Game.DontResize = true;
 Game.HideTaskbar = true;
 Game.Description =
-  "Make sure to run the base game once before using Nucleus.\n" +
-  "If you've the Steam/GoG version be sure to select the legacy version.\n\n" +
-  "Start the game and wait till the instances reposition.\n" +
-  "Create multiplayer game and join with the rest.\n" +
+  "Make sure to run the base game once before using Nucleus.\n\n" +
+  "It is very recomended to use the legacy version.\n\n" +
+  "Start the game and wait till the instances reposition.\n\n" +
+  "Create multiplayer game and join with the rest.\n\n" +
   "Press END to lock/unlock the inputs.\n\n" +
   "You can press CTRL+Q to close Nucleus and all of its instances.";
-Game.PauseBetweenContextAndLaunch = 3;
+Game.PauseBetweenContextAndLaunch = 5;
 Game.PauseBetweenProcessGrab = 3;
-Game.PauseBetweenStarts = 5;
+Game.PauseBetweenStarts = 7;
 
 Game.Hook.DInputForceDisable = false;
 Game.Hook.DInputEnabled = false;
@@ -146,9 +147,36 @@ Game.ProtoInput.BlockedMessages = [0x0008]; // Blocks WM_KILLFOCUS
 
 Game.Play = function () {
 
-  var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\comm2.exe");
-  var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder, "comm2.exe");
-  System.IO.File.Copy(savePkgOrigin, savePath, true);
+  // If the exe from the steam version copy the legacy exe instead.
+  if (System.IO.File.Exists(Context.OrigRootFolder + "\\steam_api.dll")) {
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\comm2.exe");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder + "\\Legacy", "comm2.exe");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DATA.PCK");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder + "\\Legacy", "DATA.PCK");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DATA2.PCK");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder + "\\Legacy", "DATA2.PCK");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\OUTPUT\\COMM2.CFG");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder + "\\Legacy\\OUTPUT", "COMM2.CFG");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\OUTPUT\\PERFILES.DAT");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder + "\\Legacy\\OUTPUT", "PERFILES.DAT");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  } else {
+
+    var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\comm2.exe");
+    var savePkgOrigin = System.IO.Path.Combine(Context.RootInstallFolder, "comm2.exe");
+    System.IO.File.Copy(savePkgOrigin, savePath, true);
+
+  }
 
   var savePath = (Context.SavePath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\DDraw.dll");
   var savePkgOrigin = System.IO.Path.Combine(Game.Folder, "DDraw.dll");
@@ -181,7 +209,7 @@ Game.Play = function () {
 
   var hd = Context.Options["HD"];
 
-  if (hd == "Yes") {
+  if (hd == "Enable") {
     Context.PatchFileFindPattern(
       System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
       System.IO.Path.Combine(Context.GetFolder(Nucleus.Folder.InstancedGameFolder), "comm2.exe"),
