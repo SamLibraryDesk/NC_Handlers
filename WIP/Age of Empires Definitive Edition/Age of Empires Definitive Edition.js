@@ -13,6 +13,9 @@
 /// Notes
     //Null
 
+var answers1 = ["Default", "30 FPS"];
+Game.AddOption("Limit Frame Rate", "Limit to 30 FPS", "LIMITFPS", answers1);
+
 Game.KillMutex = ["Age of Empires: Definitive Edition - Nov 10 2023 - Build 97381", "DarwinEntryBlocker"];
 Game.FileSymlinkExclusions = ["steamclient.dll", "steamclient64.dll", "steamclient_loader_x64.exe", "ColdClientLoader.ini", "HostLauncher.bat"];
 Game.FileSymlinkCopyInstead = ["steam_api64.dll"];
@@ -186,9 +189,13 @@ Game.Play = function () {
     // new Nucleus.IniSaveInfo("user::general", "ip_country", IP)
   ]);
 
+  var limitfps = Context.Options["LIMITFPS"];
+  if (limitfps == "30 FPS") { var fps = "1" } else { var fps = "0" };
+    
   // Game config
   var txtPath = Context.EnvironmentPlayer + Context.UserProfileConfigPath + "\\Config\\settings.ini";
   var dict = [
+    Context.FindLineNumberInTextFile(txtPath, "LimitFrameRate", Nucleus.SearchType.StartsWith) + "|LimitFrameRate = " + fps,
     Context.FindLineNumberInTextFile(txtPath, "Clamp Pointer", Nucleus.SearchType.StartsWith) + "|Clamp Pointer = 1",
     Context.FindLineNumberInTextFile(txtPath, "PreferFullscreen", Nucleus.SearchType.StartsWith) + "|PreferFullscreen = 0",
     Context.FindLineNumberInTextFile(txtPath, "PreferredWindowedWidth", Nucleus.SearchType.StartsWith) + "|PreferredWindowedWidth = " + Context.Width,
