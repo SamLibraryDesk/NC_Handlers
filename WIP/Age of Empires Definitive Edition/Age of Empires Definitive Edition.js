@@ -17,11 +17,10 @@ var answers1 = ["Default", "30 FPS"];
 Game.AddOption("Limit Frame Rate", "Limit to 30 FPS", "LIMITFPS", answers1);
 
 Game.KillMutex = ["Age of Empires: Definitive Edition - Nov 10 2023 - Build 97381", "DarwinEntryBlocker"];
-Game.FileSymlinkExclusions = ["steamclient.dll", "steamclient64.dll", "steamclient_loader_x64.exe", "ColdClientLoader.ini", "HostLauncher.bat"];
+Game.FileSymlinkExclusions = ["steamclient.dll", "steamclient64.dll", "steamclient_loader_x64.exe", "ColdClientLoader.ini", "Launcher.bat"];
 Game.FileSymlinkCopyInstead = ["steam_api64.dll"];
 // Game.DirSymlinkCopyInstead = [];
 // Game.KeepSymLinkOnExit = true;
-Game.UseNucleusEnvironment = true;
 // Game.UseGoldberg = true;
 Game.HandlerInterval = 100;
 Game.ExecutableName = "AoEDE_s.exe";
@@ -35,11 +34,12 @@ Game.MaxPlayersOneMonitor = 8;
 Game.MaxPlayers = 8;
 Game.SymlinkExe = false;
 Game.SymlinkGame = true;
-Game.UserProfileConfigPath = "Games\\Age of Empires DE";
+Game.UseNucleusEnvironment = true;
+Game.UserProfileConfigPath = "Games\\Age of Empires DE\\Config";
 Game.ForceUserProfileConfigCopy = true;
 
 // Game.SetWindowHookStart = true;
-Game.HideTaskbar = true;
+// Game.HideTaskbar = true;
 Game.SetWindowHook = true;
 // Game.WindowStyleValues = ["~0x40000", "~0x400000"];
 // Game.WindowStyleEndChanges = ["~0x400000"];
@@ -148,17 +148,22 @@ Game.ProtoInput.BlockedMessages = [0x0008];
 
 Game.Play = function () {
 
+  var exe = "AoEDE_s.exe";
+  var SLoader = "steamclient_loader_x64.exe"; // Steam loader
+  var Args = "NOSTARTUP"; // Command line argument.
+  var AppId = "1017900"; // Steam AppId.
+
   // Set start launcher for the players.
   var StartGame = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\Launcher.bat";
   if (Context.PlayerID == 0) {
     Game.PauseBetweenProcessGrab = 40;
 
     var lines = [
-      "ageLANServer_full_1.6.0_win_x86-64\\launcher\\launcher_aoe1.bat"
+      "lan\\launcher\\launcher_aoe1.bat"
     ];
   } else {
     var lines = [
-      "start steamclient_loader_x64.exe"
+      "start " + SLoader
     ];
   }
   Context.WriteTextFile(StartGame, lines);
@@ -166,18 +171,18 @@ Game.Play = function () {
   Context.CopyScriptFolder(Context.GetFolder(Nucleus.Folder.InstancedGameFolder));
 
   // Settings for first instance.
-  var svrtxtPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ageLANServer_full_1.6.0_win_x86-64\\launcher\\resources\\config.aoe1.toml";
+  var svrtxtPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\lan\\launcher\\resources\\config.aoe1.toml";
   Context.ModifySaveFile(svrtxtPath, svrtxtPath, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("Client", "Executable", "'" + Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\steamclient_loader_x64.exe" + "'")
+    new Nucleus.IniSaveInfo("Client", "Executable", "'" + Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\" + SLoader + "'")
   ]);
 
   // steamclient_loader settings.
   var ldiniPath = Context.GetFolder(Nucleus.Folder.InstancedGameFolder) + "\\ColdClientLoader.ini";
   Context.ModifySaveFile(ldiniPath, ldiniPath, Nucleus.SaveType.INI, [
-    new Nucleus.IniSaveInfo("SteamClient", "Exe", "AoEDE_s.exe"),
-    new Nucleus.IniSaveInfo("SteamClient", "ExeCommandLine", "NOSTARTUP"),
-    new Nucleus.IniSaveInfo("SteamClient", "AppId", "1017900"),
-    // new Nucleus.IniSaveInfo("Injection", "DllsToInjectFolder", "dlls") // Needed with AOE2&3
+    new Nucleus.IniSaveInfo("SteamClient", "Exe", exe),
+    new Nucleus.IniSaveInfo("SteamClient", "ExeCommandLine", Args),
+    new Nucleus.IniSaveInfo("SteamClient", "AppId", AppId),
+    // new Nucleus.IniSaveInfo("Injection", "DllsToInjectFolder", "xdlls") // Needed with AOE2&3
   ]);
 
   // General GoldBerg settings.
@@ -191,9 +196,9 @@ Game.Play = function () {
 
   var limitfps = Context.Options["LIMITFPS"];
   if (limitfps == "30 FPS") { var fps = "1" } else { var fps = "0" };
-    
-  // Game config
-  var txtPath = Context.EnvironmentPlayer + Context.UserProfileConfigPath + "\\Config\\settings.ini";
+
+  // The game configs
+  var txtPath = Context.EnvironmentPlayer + Context.UserProfileConfigPath + "\\settings.ini";
   var dict = [
     Context.FindLineNumberInTextFile(txtPath, "LimitFrameRate", Nucleus.SearchType.StartsWith) + "|LimitFrameRate = " + fps,
     Context.FindLineNumberInTextFile(txtPath, "Clamp Pointer", Nucleus.SearchType.StartsWith) + "|Clamp Pointer = 1",
